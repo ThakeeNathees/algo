@@ -1,2 +1,2 @@
 # Cookie-Jar
-A simple serialization library (under development)
+A simple serialization library
