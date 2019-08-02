@@ -1,21 +1,15 @@
+#pragma once
+
 #include <stdio.h>
 
 /*
- using big-endian for reading and writing bytes with the following
- primitive sizes.
-
-  char      1 byte
-  bool      1 byte
-  short     2 bytes
-  int       4 bytes
-  long      8 bytes
-  long long 8 bytes
-  float     4 bytes
-  double    8 bytes
+   using big-endian for reading and writing bytes.
+   support variant size of permitive types.
  */
 
 #include "SerialWriter.h"
 #include "SerialReader.h"
+#include "Field.h"
 
 inline void printBytes(int size, unsigned char data[]){
   int counter = 0;

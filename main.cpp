@@ -13,13 +13,16 @@ int main()
   unsigned char str[20];
 
   cjar::SerialWriter::writeBytes(data, &pointer, "cookie-jar" );
-  cjar::SerialReader::readBytes(str, data, 0);
-  cjar::SerialWriter::writeBytes(data, &pointer, str );
-  cjar::SerialWriter::writeBytes(data, &pointer, 0xff );
+  
+  cjar::Field* f = cjar::Field::Float("floatx", 1.5);
+  f->writeBytes(data, &pointer);
+  float floatx = cjar::SerialReader::readFloat(data, pointer-sizeof(float));
+  
+  
+  cjar::SerialWriter::writeBytes(data, &pointer, (char)65 );
+
 
   printBytes(size,data);
-  
-  printf("%s \n",str);
-
+  printf("%f \n",floatx);
   return 0;
 }
