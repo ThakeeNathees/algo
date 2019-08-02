@@ -1,15 +1,4 @@
-// using big-endian for writing bytes
 
-/*
-  char      1 byte
-  bool      1 byte
-  short     2 bytes
-  int       4 bytes
-  long      8 bytes
-  long long 8 bytes
-  float     4 bytes
-  double    8 bytes
- */
 
 namespace cjar{
 
@@ -42,7 +31,7 @@ public:
   }
 
   inline static void writeBytes(unsigned char* stream, int* pointer, int value){
-      writeBytes(stream, pointer, value);
+      writeBytes(stream, pointer, (unsigned int)value);
   }
   inline static void writeBytes(unsigned char* stream, int* pointer, unsigned int value){
       stream[(*pointer)++] = (unsigned char) (value >> 24) & 0x00ff;
@@ -52,12 +41,12 @@ public:
   }
 
   inline static void writeBytes(unsigned char* stream, int* pointer, unsigned long long value){
-      writeBytes(stream, pointer, value);
+      writeBytes(stream, pointer, (unsigned long)value);
   }
   inline static void writeBytes(unsigned char* stream, int* pointer, long long value){
-      writeBytes(stream, pointer, value);
+      writeBytes(stream, pointer, (unsigned long)value);
   }inline static void writeBytes(unsigned char* stream, int* pointer, long value){
-      writeBytes(stream, pointer, value);
+      writeBytes(stream, pointer, (unsigned long)value);
   }
   inline static void writeBytes(unsigned char* stream, int* pointer, unsigned long value){
       stream[(*pointer)++] = (unsigned char) (value >> 56) & 0x00ff;
@@ -95,7 +84,13 @@ public:
   inline static void writeBytes(unsigned char* stream, int* pointer, bool value){
       stream[(*pointer)++] = (unsigned char) value; 
   }
-
+  
+  inline static void writeBytes(unsigned char* stream, int* pointer, unsigned char* value){
+    writeBytes(stream, pointer, (const char*)value);
+  }
+  inline static void writeBytes(unsigned char* stream, int* pointer, char* value){
+    writeBytes(stream, pointer, (const char*)value);
+  }
   inline static void writeBytes(unsigned char* stream, int* pointer, const char* value){
       unsigned short len = 0;
       int len_p = *pointer;
