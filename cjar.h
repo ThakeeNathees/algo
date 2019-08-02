@@ -1,4 +1,11 @@
 #pragma once
+#include <stdio.h>
+
+/* TODO: array copying 2 times 
+     1. when m_data initialize by copying
+     2. when writeByte() called
+     may be m_data should be pointing to data[] -> need to deal with memory leak and distruction of data[]
+*/
 
 namespace cjar
 {

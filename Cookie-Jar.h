@@ -9,8 +9,11 @@
 
 #include "SerialWriter.h"
 #include "SerialReader.h"
-#include "Field.h"
+#include "CjField.h"
+#include "CjArray.h"
 
+namespace cjar
+{
 inline void printBytes(int size, unsigned char data[]){
   int counter = 0;
   for (int i=0; i<size; i++){
@@ -26,4 +29,14 @@ inline void printBytes(int size, unsigned char data[]){
     }
   }
   printf("\n");
+}
+
+
+inline void writeToFile(unsigned char* buffer, int count, const char* path){
+   FILE* file_p;
+   file_p = fopen(path, "wb");
+   fwrite(buffer, sizeof(char), count, file_p );
+   fclose(file_p);
+}
+
 }

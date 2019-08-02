@@ -1,4 +1,5 @@
 #pragma once
+#include "cjar.h"
 
 namespace cjar{
 
@@ -15,6 +16,9 @@ private:
       double d; unsigned char c[0];
   };
 public:
+  template<typename T>
+  inline static void writeBytes(unsigned char* stream, int* pointer, T value) =  delete;
+
   inline static void writeBytes(unsigned char* stream, int* pointer, char value){
       writeBytes(stream, pointer, (unsigned char)value);
   }
@@ -75,15 +79,8 @@ public:
   inline static void writeBytes(unsigned char* stream, int* pointer, bool value){
       stream[(*pointer)++] = (unsigned char) value; 
   }
-  
-  inline static void writeBytes(unsigned char* stream, int* pointer, char* value, int count){
-    writeBytes(stream, pointer, (unsigned char*)value, count);
-  }
-  inline static void writeBytes(unsigned char* stream, int* pointer, unsigned char* value, int count){
-      for( int i=0; i < count; i++  )
-          writeBytes(stream, pointer, value[i] );
-  }
-  
+
+  // string 
   inline static void writeBytes(unsigned char* stream, int* pointer, const char* value){
       unsigned short len = 0;
       int len_p = *pointer;
@@ -93,11 +90,24 @@ public:
       }
       writeBytes(stream, &len_p, len);
   }
+  
+  // array
+  template<typename T>
+  inline static void writeBytes(unsigned char* stream, int* pointer, T* value) = delete;
+  template<typename T>
+  inline static void writeBytes(unsigned char* stream, int* pointer, const T* value) = delete;
 
-  inline static void writeBytes(unsigned char* stream, int* pointer, const char* value, int count){
-      for(int i=0; i<count; i++){
-          writeBytes(stream, pointer, value[i] );
+  template<typename T>
+  inline static void writeBytes(unsigned char* stream, int* pointer, T* value, int count){
+      for (int i=0;  i<count; i++){
+          writeBytes(stream, pointer, value[i]);
       }
+  }
+
+  template<typename T>
+  inline static void writeBytes(unsigned char* stream, int* pointer, const T* value, int count){
+      for (int i=0;  i<count; i++)
+          writeBytes(stream, pointer, value[i]);
   }
 
 

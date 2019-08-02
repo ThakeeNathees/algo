@@ -2,27 +2,32 @@
 #include "Cookie-Jar.h"
 
 
+void f(unsigned char c){}
 
 
 int main()
 {
-  unsigned char data[64] = {0};
+  
+  //cjar::SerialWriter::writeBytes(data, &pointer, "cookie-jar" );
+
+  //short c[] = { 0xc0ff, 0xeec0, 0xffee };
+  int c = 100;
+  char* x = new char[c];
+  for (int i=0; i<c; i++){
+    x[i] = i;
+  }
+  cjar::CjArray* arr = cjar::CjArray::Char("arrayc", x, c);
+
+  unsigned char buffer[ arr->getSize() ];
   int pointer = 0;
-  int size = sizeof(data)/sizeof(*data);
-  
-  unsigned char str[20];
+  int count = sizeof(buffer)/sizeof(*buffer);
 
-  cjar::SerialWriter::writeBytes(data, &pointer, "cookie-jar" );
-  
-  cjar::Field* f = cjar::Field::Float("floatx", 1.5);
-  f->writeBytes(data, &pointer);
-  float floatx = cjar::SerialReader::readFloat(data, pointer-sizeof(float));
-  
-  
-  cjar::SerialWriter::writeBytes(data, &pointer, (char)65 );
+  arr->writeBytes(buffer, &pointer);
 
+  cjar::writeToFile(buffer, count, "./serialdata");
 
-  printBytes(size,data);
-  printf("%f \n",floatx);
+  cjar::printBytes(count,buffer);
+
+  //printf("%f \n",floatx);
   return 0;
 }
