@@ -6,6 +6,8 @@ namespace cjar
 {
 class CjArray
 {
+private:
+    inline CjArray(){}
 public:
     inline ~CjArray(){ delete[] m_data; }
 public:
@@ -113,9 +115,9 @@ public:
 
     inline void writeBytes(unsigned char* stream, int* pointer){
         SerialWriter::writeBytes(stream, pointer, CONTAINER_TYPE);
-        SerialWriter::writeBytes(stream, pointer, m_name);
         SerialWriter::writeBytes(stream, pointer, m_data_type);
         SerialWriter::writeBytes(stream, pointer, m_count);
+        SerialWriter::writeBytes(stream, pointer, m_name);
         SerialWriter::writeBytes(stream, pointer, m_data, getTypeSize((Type)m_data_type) * m_count );
     }
 

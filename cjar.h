@@ -1,5 +1,6 @@
 #pragma once
 #include <stdio.h>
+#include <vector>
 
 /* TODO: array copying 2 times 
      1. when m_data initialize by copying

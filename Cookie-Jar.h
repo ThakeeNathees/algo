@@ -11,6 +11,7 @@
 #include "SerialReader.h"
 #include "CjField.h"
 #include "CjArray.h"
+#include "CjObject.h"
 
 namespace cjar
 {

@@ -13,7 +13,7 @@ public:
     const char*         m_name;
     unsigned char       m_data_type;
     unsigned char*      m_data;
-    
+
 private:
     inline CjField(){};
 public:
@@ -90,8 +90,8 @@ public:
 
     inline void writeBytes(unsigned char* stream, int* pointer){
         SerialWriter::writeBytes(stream, pointer, CONTAINER_TYPE);
-        SerialWriter::writeBytes(stream, pointer, m_name);
         SerialWriter::writeBytes(stream, pointer, m_data_type);
+        SerialWriter::writeBytes(stream, pointer, m_name);
         SerialWriter::writeBytes(stream, pointer, m_data, getTypeSize((Type)m_data_type));
     }
 
