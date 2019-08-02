@@ -12,10 +12,11 @@ namespace cjar
 {
     enum ContainerType
     {
-        UNKNOWN = 0, 
-        FIELD, 
-        ARRAY, 
-        OBJECT,
+        UNKNOWN  = 0, 
+        FIELD    = 1,
+        ARRAY    = 2, 
+        OBJECT   = 3,
+        DATABASE = 4,
     };
 
     enum Type
@@ -42,6 +43,12 @@ namespace cjar
             case UNKNOWN :
             default      : return 0;
         }
+    }
+
+    int getStrlen(const char* str){
+        int result = 0;
+        while(str[++result]);
+        return result;
     }
 
 }

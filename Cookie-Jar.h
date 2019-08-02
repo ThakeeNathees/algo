@@ -12,6 +12,7 @@
 #include "CjField.h"
 #include "CjArray.h"
 #include "CjObject.h"
+#include "CjDataBase.h"
 
 namespace cjar
 {

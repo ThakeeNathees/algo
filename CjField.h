@@ -7,14 +7,13 @@ namespace cjar
 
 class CjField
 {
-public:
+private:
     static const unsigned char CONTAINER_TYPE = ContainerType::FIELD;
+    int                 m_size = sizeof(char) + sizeof(int) + sizeof(short) + sizeof(char);
     short               m_name_length;
-    const char*         m_name;
+    const char*         m_name = nullptr;
     unsigned char       m_data_type;
     unsigned char*      m_data;
-
-private:
     inline CjField(){};
 public:
     inline ~CjField(){ delete[] m_data; }
@@ -23,7 +22,8 @@ public:
         CjField* field = new CjField();
         field->setName(name);
         field->m_data_type = Type::CHAR;
-        field->m_data = new unsigned char[getTypeSize( (Type)field->m_data_type )];
+        field->m_size += getTypeSize( (Type)field->m_data_type );
+        field->m_data = new unsigned char[ getTypeSize( (Type)field->m_data_type ) ];
         int pointer = 0;
         SerialWriter::writeBytes(field->m_data, &pointer, value);
         return field;
@@ -32,6 +32,7 @@ public:
         CjField* field = new CjField();
         field->setName(name);
         field->m_data_type = Type::SHORT;
+        field->m_size += getTypeSize( (Type)field->m_data_type );
         field->m_data = new unsigned char[getTypeSize( (Type)field->m_data_type )];
         int pointer = 0;
         SerialWriter::writeBytes(field->m_data, &pointer, value);
@@ -41,6 +42,7 @@ public:
         CjField* field = new CjField();
         field->setName(name);
         field->m_data_type = Type::INTEGER;
+        field->m_size += getTypeSize( (Type)field->m_data_type );
         field->m_data = new unsigned char[getTypeSize( (Type)field->m_data_type )];
         int pointer = 0;
         SerialWriter::writeBytes(field->m_data, &pointer, value);
@@ -50,6 +52,7 @@ public:
         CjField* field = new CjField();
         field->setName(name);
         field->m_data_type = Type::LONG;
+        field->m_size += getTypeSize( (Type)field->m_data_type );
         field->m_data = new unsigned char[getTypeSize( (Type)field->m_data_type )];
         int pointer = 0;
         SerialWriter::writeBytes(field->m_data, &pointer, value);
@@ -59,6 +62,7 @@ public:
         CjField* field = new CjField();
         field->setName(name);
         field->m_data_type = Type::BOOLEAN;
+        field->m_size += getTypeSize( (Type)field->m_data_type );
         field->m_data = new unsigned char[ getTypeSize( (Type)field->m_data_type ) ];
         int pointer = 0;
         SerialWriter::writeBytes(field->m_data, &pointer, value);
@@ -68,6 +72,7 @@ public:
         CjField* field = new CjField();
         field->setName(name);
         field->m_data_type = Type::FLOAT;
+        field->m_size += getTypeSize( (Type)field->m_data_type );
         field->m_data = new unsigned char[ getTypeSize( (Type)field->m_data_type ) ];
         int pointer = 0;
         SerialWriter::writeBytes(field->m_data, &pointer, value);
@@ -77,6 +82,7 @@ public:
         CjField* field = new CjField();
         field->setName(name);
         field->m_data_type = Type::DOUBLE;
+        field->m_size += getTypeSize( (Type)field->m_data_type );
         field->m_data = new unsigned char[ getTypeSize( (Type)field->m_data_type ) ];
         int pointer = 0;
         SerialWriter::writeBytes(field->m_data, &pointer, value);
@@ -84,20 +90,23 @@ public:
     }
 
     inline void setName(const char* name){
+        if (m_name != nullptr) m_size -= m_name_length;
         m_name = name;
-        m_name_length = 0; while( *(name++) ) m_name_length++ ;
+        m_name_length = getStrlen(name);
+        m_size += m_name_length;
     }
 
     inline void writeBytes(unsigned char* stream, int* pointer){
         SerialWriter::writeBytes(stream, pointer, CONTAINER_TYPE);
-        SerialWriter::writeBytes(stream, pointer, m_data_type);
+        SerialWriter::writeBytes(stream, pointer, m_size);
         SerialWriter::writeBytes(stream, pointer, m_name);
+        SerialWriter::writeBytes(stream, pointer, m_data_type);
         SerialWriter::writeBytes(stream, pointer, m_data, getTypeSize((Type)m_data_type));
     }
 
     inline int getSize()
     {
-        return sizeof(char) + sizeof(short) + m_name_length + sizeof(char) + getTypeSize((Type)m_data_type) ;
+        return m_size;
     }
     
 

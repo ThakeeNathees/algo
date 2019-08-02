@@ -5,9 +5,6 @@ namespace cjar{
 
 class SerialWriter
 {
-public:
-           const char* HEADER  = "Cookie-Jar";
-  unsigned const short VERSION = 0x0100;
 private:
   union FloatUnion{
       float f; unsigned char c[0];

@@ -8,17 +8,17 @@ class CjArray
 {
 private:
     inline CjArray(){}
-public:
-    inline ~CjArray(){ delete[] m_data; }
-public:
     static const unsigned char CONTAINER_TYPE = ContainerType::ARRAY;
+    int                 m_size = sizeof(char) + sizeof(int) + sizeof(short) + sizeof(char) + sizeof(int);
     short               m_name_length;
-    const char*         m_name;
+    const char*         m_name = nullptr;
     unsigned char       m_data_type;
     unsigned int        m_count;
     unsigned char*      m_data;
 
 public:
+    inline ~CjArray(){ delete[] m_data; }
+
     inline static CjArray* Char(const char* name, char* data, unsigned int count ){
         return Char(name, (unsigned char*)data, count);
     }
@@ -27,6 +27,7 @@ public:
         array->setName(name);
         array->m_data_type = Type::CHAR;
         array->m_count = count;
+        array->m_size += getTypeSize((Type)array->m_data_type) * count;
         array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
         int pointer = 0;
         SerialWriter::writeBytes(array->m_data, &pointer, data, count);
@@ -41,6 +42,7 @@ public:
         array->setName(name);
         array->m_data_type = Type::SHORT;
         array->m_count = count;
+        array->m_size += getTypeSize((Type)array->m_data_type) * count;
         array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
         int pointer = 0;
         SerialWriter::writeBytes(array->m_data, &pointer, data, array->m_count);
@@ -55,6 +57,7 @@ public:
         array->setName(name);
         array->m_data_type = Type::INTEGER;
         array->m_count = count;
+        array->m_size += getTypeSize((Type)array->m_data_type) * count;
         array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
         int pointer = 0;
         SerialWriter::writeBytes(array->m_data, &pointer, data, array->m_count);
@@ -69,6 +72,7 @@ public:
         array->setName(name);
         array->m_data_type = Type::LONG;
         array->m_count = count;
+        array->m_size += getTypeSize((Type)array->m_data_type) * count;
         array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
         int pointer = 0;
         SerialWriter::writeBytes(array->m_data, &pointer, data, array->m_count);
@@ -80,6 +84,7 @@ public:
         array->setName(name);
         array->m_data_type = Type::BOOLEAN;
         array->m_count = count;
+        array->m_size += getTypeSize((Type)array->m_data_type) * count;
         array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
         int pointer = 0;
         SerialWriter::writeBytes(array->m_data, &pointer, data, array->m_count);
@@ -91,6 +96,7 @@ public:
         array->setName(name);
         array->m_data_type = Type::FLOAT;
         array->m_count = count;
+        array->m_size += getTypeSize((Type)array->m_data_type) * count;
         array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
         int pointer = 0;
         SerialWriter::writeBytes(array->m_data, &pointer, data, array->m_count);
@@ -102,6 +108,7 @@ public:
         array->setName(name);
         array->m_data_type = Type::DOUBLE;
         array->m_count = count;
+        array->m_size += getTypeSize((Type)array->m_data_type) * count;
         array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
         int pointer = 0;
         SerialWriter::writeBytes(array->m_data, &pointer, data, array->m_count);
@@ -109,20 +116,23 @@ public:
     }
     
     inline void setName(const char* name){
+        if (m_name != nullptr) m_size -= m_name_length;
         m_name = name;
-        m_name_length = 0; while( *(name++) ) m_name_length++ ;
+        m_name_length = getStrlen(name);
+        m_size += m_name_length;
     }
 
     inline void writeBytes(unsigned char* stream, int* pointer){
         SerialWriter::writeBytes(stream, pointer, CONTAINER_TYPE);
+        SerialWriter::writeBytes(stream, pointer, m_size);
+        SerialWriter::writeBytes(stream, pointer, m_name);
         SerialWriter::writeBytes(stream, pointer, m_data_type);
         SerialWriter::writeBytes(stream, pointer, m_count);
-        SerialWriter::writeBytes(stream, pointer, m_name);
         SerialWriter::writeBytes(stream, pointer, m_data, getTypeSize((Type)m_data_type) * m_count );
     }
 
     inline int getSize(){
-        return sizeof(char) + sizeof(short) + m_name_length + sizeof(char) + sizeof(int) + getTypeSize((Type)m_data_type)*m_count;
+        return m_size;
     }
 
 };
