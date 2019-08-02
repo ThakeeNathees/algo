@@ -10,11 +10,6 @@ void printBytes(int size, unsigned char data[]){
   printf("\n");
 }
 
-union F
-{
-  float f;
-  unsigned char c[0];
-};
 
 int main()
 {
@@ -22,12 +17,11 @@ int main()
   int pointer = 0;
   int size = sizeof(data)/sizeof(*data);
   
-  F f; f.f = 1.5;
-  for (size_t i=0; i<sizeof(F); i++){
-    printf("%02x\n",f.c[i]);
-  }
-  
-  //printBytes(size,data);
+  cjar::SerialWriter::writeBytes(data, &pointer, "cookie-jar" );
+  cjar::SerialWriter::writeBytes(data, &pointer, (char) 0xff);
+
+  printBytes(size,data);
+  //printf("%ld %ld\n",sizeof(float), sizeof(double));
 
   return 0;
 }
