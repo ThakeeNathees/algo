@@ -23,7 +23,7 @@ public:
     inline void setName(const char* name){
         if(m_name != nullptr) m_size -= m_name_length;
         m_name = name;
-        m_name_length = getStrlen(name);
+        m_name_length = 0; while( *(name++) ) m_name_length++ ;
         m_size += m_name_length;
     }
 

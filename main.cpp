@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "Cookie-Jar.h"
 
+#include <memory>
 
 void f(unsigned char c){}
 
@@ -8,12 +9,7 @@ void f(unsigned char c){}
 int main()
 {
   
-  //cjar::SerialWriter::writeBytes(data, &pointer, "cookie-jar" );
-
-  //short c[] = { 0xc0ff, 0xeec0, 0xffee };
-  unsigned char* x = new unsigned char[3];
-  x[0] = 1;x[1] = 2;x[2] = 3;
-  cjar::CjArray* arr = cjar::CjArray::Char("array123", x, 3);
+  cjar::CjArray* arr = cjar::CjArray::Char("string_arr","some string");
   cjar::CjField* fint = cjar::CjField::Int("fint32",32);
 
   cjar::CjObject cjo = cjar::CjObject("object0");
@@ -29,9 +25,8 @@ int main()
   dbase.writeBytes(buffer, &pointer);
 
 
-  cjar::writeToFile(buffer, count, "./serialdata");
+  cjar::writeToFile(buffer, count, "./serialdata.cjar");
   cjar::printBytes(count,buffer);
 
-  //printf("%i \n", sizeof(char) + sizeof(short) );
   return 0;
 }

@@ -33,6 +33,20 @@ public:
         SerialWriter::writeBytes(array->m_data, &pointer, data, count);
         return array;
     }
+    // for string
+    inline static CjArray* Char(const char* name, const char* data){
+        int count = getStrlen(data);
+        CjArray* array = new CjArray();
+        array->setName(name);
+        array->m_data_type = Type::CHAR;
+        array->m_count = count+1;  // for null \0 character
+        array->m_size += getTypeSize((Type)array->m_data_type) * array->m_count;
+        array->m_data = new unsigned char[ getTypeSize((Type)array->m_data_type) * count ];
+        int pointer = 0;
+        SerialWriter::writeBytes( array->m_data, &pointer, data, count);
+        SerialWriter::writeBytes( array->m_data, &pointer, (char)0 );
+        return array;
+    }
 
     inline static CjArray* Short(const char* name, short* data, unsigned int count ){
         return Short(name, (unsigned short*)data, count);

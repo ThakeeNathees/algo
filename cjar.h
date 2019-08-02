@@ -6,6 +6,9 @@
      1. when m_data initialize by copying
      2. when writeByte() called
      may be m_data should be pointing to data[] -> need to deal with memory leak and distruction of data[]
+
+  NOTE:
+     strings are just CjArray of char but the last character is 0;
 */
 
 namespace cjar

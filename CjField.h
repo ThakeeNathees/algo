@@ -16,6 +16,7 @@ private:
     unsigned char*      m_data;
     inline CjField(){};
 public:
+    inline auto getdata(){ return m_data; }
     inline ~CjField(){ delete[] m_data; }
     
     inline static CjField* Char(const char* name, unsigned char value){
