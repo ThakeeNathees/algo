@@ -68,4 +68,18 @@ namespace cjar
         dest[pointer] = 0;
     }
 
+    char* strConCat(const char* str1, const char* str2){
+        int len1 = getStrlen(str1);
+        int len2 = getStrlen(str2);
+        char* _ret = new char[ len1 + len2 + 1 ];
+        for (int i=0; i < len1; i++  ){
+            _ret[i] = str1[i];
+        }
+        for (int i=len1, j=0; i < (len1+len2); i++, j++ ){
+            _ret[i] = str2[j];
+        }
+        _ret[len1+len2] = 0;
+        return _ret;
+    }
+
 }

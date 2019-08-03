@@ -6,28 +6,34 @@
 int main()
 {
   
-  cjar::CjArray* arr = cjar::CjArray::Char("string_arr","some string");
+  char* carray = new char[10]; char c = 0x61;
+  for (int i=0; i<10; i++){
+    carray[i] = c++;
+  }
 
-  cjar::CjObject* cjo = cjar::CjObject::create("object0");
-  
-  cjo->addField( cjar::CjField::Int("fint32",32) );   
-  cjo->addArray(arr);
-  
+  //fields
+  cjar::Field* int32 = cjar::Field::Int("int32",32);
+  cjar::Array* arr = cjar::Array::Char("char_arr",carray, 10);
+  cjar::Array* str = cjar::Array::String("str_name", "hello world!");
+  //object
+  cjar::Object* obj = cjar::Object::create("anobject");
+  obj->addField(int32);
+  obj->addArray(arr);
+  obj->addArray(str);  
+  // database
+  cjar::DataBase* dbase = cjar::DataBase::create("dbase");
+  dbase->addObject(obj);
 
-  cjar::CjDataBase dbase = cjar::CjDataBase("dbase");
-  dbase.addObject(cjo);
 
+  cjar::Jar jar("jar_test");
+  jar.readFromFile("jar_test.cjar");
+  //jar.setDataBase(dbase);
+  //jar.convertBinary();
+  jar.print();
+  jar.writeToFile();
 
-  unsigned char buffer[ dbase.getSize() ];
-  int pointer = 0;
-  int count = sizeof(buffer)/sizeof(*buffer);
-
-
-  
-  dbase.writeBytes(buffer, &pointer);
-
-  cjar::writeToFile(buffer, count, "./serialdata.cjar");
-  cjar::printBytes(count,buffer);
+  const char* hello = jar.getDataBase()->getObjects()[0]->getArrays()[1]->getString();
+  printf("%s\n",hello);
 
   return 0;
 }
