@@ -1,14 +1,20 @@
 #pragma once
 #include <stdio.h>
+#include <assert.h>
 #include <vector>
 
 /* TODO: array copying 2 times 
-     1. when m_data initialize by copying
-     2. when writeByte() called
-     may be m_data should be pointing to data[] -> need to deal with memory leak and distruction of data[]
+    1. when m_data initialize by copying
+    2. when writeByte() called
+    may be m_data should be pointing to data[] -> need to deal with memory leak and distruction of data[]
+
+    memory management;
+    CjDataBase free all other fields when it deleted
+    don't manually delete any CjArray, CjField, or CjObject
+
 
   NOTE:
-     strings are just CjArray of char but the last character is 0;
+    strings are just CjArray of char but the last character is 0;
 */
 
 namespace cjar
@@ -52,6 +58,14 @@ namespace cjar
         int result = 0;
         while(str[++result]);
         return result;
+    }
+
+    void setStr(char* dest, const char* src){
+        int pointer =0;
+        while(*src){
+            dest[pointer++] = *src++;
+        }
+        dest[pointer] = 0;
     }
 
 }

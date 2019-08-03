@@ -30,6 +30,15 @@ inline void printBytes(int size, unsigned char data[]){
         printf("\n");
     }
   }
+
+  int remain = size % 16;
+  for (int i=0; i<16-remain; i++) printf("   ");
+  for (int i=remain; i>0; i--){
+    char c = data[size-i];
+    c = ( c>=0x20 && c<=0x7e )?c:'.';
+    printf(" %c", c);
+  }
+
   printf("\n");
 }
 
