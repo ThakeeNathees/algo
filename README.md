@@ -2,7 +2,7 @@
 A simple & fast C++ serialization header only library.
 
 ### Install
-It's header only library just copy the source folder to your include path and use a C++11 compiler or use as a pre-compiled library.
+It's a header only library just copy the source folder to your include path and use a C++11 compiler or use as a pre-compiled library.
 
 ### Usage Samples
 ```c++
@@ -38,14 +38,14 @@ int main()
 
   cjar::Jar jar("MyJar");
   jar.setDataBase(dbase);
-  jar.convertBinary();
+  jar.convertToBinary();
   jar.printBytes();
   jar.writeToFile(); // writes to MyJar.cjar
 
   return 0;
 }
 ```
-console output
+binary data
 ```
 00 0a 43 6f 6f 6b 69 65 2d 4a 61 72 01 00 04 00  . . C o o k i e - J a r . . . .
 00 00 c1 00 05 64 62 61 73 65 00 00 00 02 03 00  . . . . . d b a s e . . . . . .
@@ -73,10 +73,10 @@ int main()
   jar.printString();
 
   cjar::DataBase* dbase = jar.getDataBase();
-  int int_val     = dbase->getObjects()[0]->getFields()[0]->getValue().i;
+  int int_val     = dbase->getObjects()[0]->getFields()[0]->getValue<int>();
   int* int_array  = dbase->getObjects()[0]->getArrays()[0]->getValues<int>();
   const char* str = dbase->getObjects()[0]->getArrays()[1]->getString();
-  bool bool_val   = dbase->getObjects()[1]->getFields()[0]->getValue().b;
+  bool bool_val   = dbase->getObjects()[1]->getFields()[0]->getValue<bool>();
 
   return 0;
 }

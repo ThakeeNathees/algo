@@ -126,8 +126,18 @@ public:
     inline const char* getName(){
         return m_name;
     }
-    inline Value getValue(){
-        return m_value;
+    template <typename T>
+    inline T getValue(){
+        switch ((Type)m_data_type){
+            case CHAR    : return m_value.c;
+            case SHORT   : return m_value.s;
+            case INTEGER : return m_value.i;
+            case LONG    : return m_value.l;
+            case BOOLEAN : return m_value.b;
+            case FLOAT   : return m_value.f;
+            case DOUBLE  : return m_value.d;
+            default      : return 0;
+        }
     }
     inline Type getType(){
         return (Type)m_data_type;

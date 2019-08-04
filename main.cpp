@@ -33,10 +33,10 @@ int main()
   jar.printString();
 
   cjar::DataBase* dbase = jar.getDataBase();
-  int int_val     = dbase->getObjects()[0]->getFields()[0]->getValue().i;
+  int int_val     = dbase->getObjects()[0]->getFields()[0]->getValue<int>();
   int* int_array  = dbase->getObjects()[0]->getArrays()[0]->getValues<int>();
   const char* str = dbase->getObjects()[0]->getArrays()[1]->getString();
-  bool bool_val   = dbase->getObjects()[1]->getFields()[0]->getValue().b;
+  bool bool_val   = dbase->getObjects()[1]->getFields()[0]->getValue<bool>();
 
   return 0;
 }

@@ -45,7 +45,7 @@ public:
     return m_dbase;
   }
 
-  inline void convertBinary(){
+  inline void convertToBinary(){
     assert(m_dbase != nullptr);
     m_buffer = new unsigned char[ m_dbase->getSize() ];
     m_buffer_size = m_dbase->getSize();
@@ -134,13 +134,13 @@ inline void _printString(DataBase* dbase){
     printf("%s:\n", o->getName());
     for (auto f: o->getFields()){
       switch(f->getType()){
-        case CHAR    : printf("\t%-15s = %c\n",f->getName(), f->getValue().c );   break;
-        case SHORT   : printf("\t%-15s = %u\n",f->getName(), f->getValue().s );  break;
-        case INTEGER : printf("\t%-15s = %u\n",f->getName(), f->getValue().i );    break;
-        case LONG    : printf("\t%-15s = %lu\n",f->getName(), f->getValue().l );   break;
-        case BOOLEAN : printf("\t%-15s = %s\n",f->getName(), (f->getValue().b)?"true":"false" );   break;
-        case FLOAT   : printf("\t%-15s = %f\n",f->getName(), f->getValue().f );  break;
-        case DOUBLE  : printf("\t%-15s = %f\n",f->getName(), f->getValue().d ); break;
+        case CHAR    : printf("\t%-15s = %c\n",f->getName(), f->getValue<char>() );   break;
+        case SHORT   : printf("\t%-15s = %u\n",f->getName(), f->getValue<short>() );  break;
+        case INTEGER : printf("\t%-15s = %u\n",f->getName(), f->getValue<int>() );    break;
+        case LONG    : printf("\t%-15s = %lu\n",f->getName(), f->getValue<long>() );   break;
+        case BOOLEAN : printf("\t%-15s = %s\n",f->getName(), (f->getValue<bool>())?"true":"false" );   break;
+        case FLOAT   : printf("\t%-15s = %f\n",f->getName(), f->getValue<float>() );  break;
+        case DOUBLE  : printf("\t%-15s = %f\n",f->getName(), f->getValue<double>() ); break;
       }
     }
     for (auto a : o->getArrays()){
