@@ -28,7 +28,7 @@ int main()
   cjar::Object* obj0 = cjar::Object::create("Obj0");
   obj0->addField(i_val)->addArray(i_arr)->addArray(str_arr);
 
-  cjar::Object* obj1 = cjar::Object::create("Obj2");
+  cjar::Object* obj1 = cjar::Object::create("Obj1");
   obj1->addField( cjar::Field::Bool("bool_val", true) );
 
   // database
@@ -57,7 +57,7 @@ binary data
 05 00 00 00 06 00 00 00 07 00 00 00 08 00 00 00  . . . . . . . . . . . . . . . .
 09 02 00 00 00 1c 00 03 73 74 72 01 00 00 00 0d  . . . . . . . . s t r . . . . .
 68 65 6c 6c 6f 20 77 6f 72 6c 64 21 00 03 00 00  h e l l o   w o r l d ! . . . .
-00 24 00 04 4f 62 6a 32 00 00 00 01 01 00 00 00  . $ . . O b j 2 . . . . . . . .
+00 24 00 04 4f 62 6a 31 00 00 00 01 01 00 00 00  . $ . . O b j 1 . . . . . . . .
 11 00 08 62 6f 6f 6c 5f 76 61 6c 02 01 00 00 00  . . . b o o l _ v a l . . . . .
 00                                               .
 ```
@@ -93,7 +93,7 @@ Obj0:
         int_array       = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, }
         str             = hello world!
 
-Obj2:
+Obj1:
         bool_val        = true
 
 ================================================================================
