@@ -1,44 +1,42 @@
-#include <stdio.h>
 #include "Cookie-Jar.h"
-#include <string.h>
 
 
 int main()
 {
-  int size = 20;
-  int* iarray = new int[size]; int c = 0;
-  for (int i=0; i<size; i++){
-    iarray[i] = c++;
-  }
+/*int size = 10;
+  int* int_array = new int[size];
+  for (int i=0; i<size; i++) int_array[i] = i;
 
-  //fields
-  cjar::Field* int32 = cjar::Field::Int("int32",32);
-  cjar::Array* arr = cjar::Array::Int("arr",iarray, size);
-  delete[] iarray;
-  cjar::Array* str = cjar::Array::String("str", "hello world!");
-  //object
-  cjar::Object* obj = cjar::Object::create("AnObject");
-  obj->addField(int32);
-  obj->addArray(arr);
-  obj->addArray(str);  
+  int int_val = 32;
+  const char* str = "hello world!";
+
+  //fields & arrays
+  cjar::Field* i_val = cjar::Field::Int("int_val",int_val);
+  cjar::Array* i_arr = cjar::Array::Int("int_array",int_array, size);
+  delete[] int_array;
+  cjar::Array* str_arr = cjar::Array::String("str", str);
+  
+  //objects
+  cjar::Object* obj0 = cjar::Object::create("Obj0");
+  obj0->addField(i_val)->addArray(i_arr)->addArray(str_arr);
+
   cjar::Object* obj1 = cjar::Object::create("Obj2");
-  obj1->addField( cjar::Field::Bool("boolval", true) );
+  obj1->addField( cjar::Field::Bool("bool_val", true) );
+
   // database
   cjar::DataBase* dbase = cjar::DataBase::create("dbase");
-  dbase->addObject(obj);
-  dbase->addObject(obj1);
+  dbase->addObject(obj0)->addObject(obj1);*/
 
 
-  cjar::Jar jar("jar_test");
-  //jar.readFromFile("jar_test.cjar");
-  jar.setDataBase(dbase);
-  jar.convertBinary();
-  jar.printBytes();
+  cjar::Jar jar("MyJar");
+  jar.readFromFile("MyJar.cjar");
   jar.printString();
-  //jar.writeToFile();
 
-  const char* hello = jar.getDataBase()->getObjects()[0]->getArrays()[1]->getString();
-  //printf("%s\n",hello);
+  cjar::DataBase* dbase = jar.getDataBase();
+  int int_val     = dbase->getObjects()[0]->getFields()[0]->getValue().i;
+  int* int_array  = dbase->getObjects()[0]->getArrays()[0]->getValues<int>();
+  const char* str = dbase->getObjects()[0]->getArrays()[1]->getString();
+  bool bool_val   = dbase->getObjects()[1]->getFields()[0]->getValue().b;
 
   return 0;
 }

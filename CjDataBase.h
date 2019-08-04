@@ -52,10 +52,11 @@ public:
         return m_objects;
     }
 
-    inline void addObject(Object* object){
+    inline DataBase* addObject(Object* object){
         m_objects.push_back(object);
         m_object_count++;
         m_size += object->getSize();
+        return this;
     }
 
     inline void writeBytes(unsigned char* stream, int* pointer){

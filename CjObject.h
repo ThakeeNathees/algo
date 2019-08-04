@@ -58,16 +58,18 @@ public:
         return m_arrays;
     }
 
-    inline void addField(Field* field){
+    inline Object* addField(Field* field){
         m_fields.push_back(field);
         m_field_count++;
         m_size += field->getSize();
+        return this;
     }
     
-    inline void addArray(Array* array){
+    inline Object* addArray(Array* array){
         m_arrays.push_back(array);
         m_array_count++;
         m_size += array->getSize();
+        return this;
     }
 
     inline void writeBytes(unsigned char* stream, int* pointer){
