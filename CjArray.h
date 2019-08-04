@@ -149,6 +149,16 @@ public:
     inline int getCount(){
         return m_count;
     }
+    inline Type getType(){
+        return (Type)m_data_type;
+    }
+    inline bool canBeString(){
+        if ( getType() != CHAR || m_data[m_count-1] != 0 ) return false;
+        for (int i=0; i<m_count-1; i++){
+            if ( m_data[i] < 0x20 || 0x7e < m_data[i] ) return false;
+        }
+        return true;
+    }
 
 
     inline void writeBytes(unsigned char* stream, int* pointer){

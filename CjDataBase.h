@@ -5,9 +5,10 @@ namespace cjar
 
 class DataBase
 {
-private:
+public:
     const char* HEADER  = "Cookie-Jar"; // can't make static & inline with c++11
     static unsigned const short VERSION = 0x0100;
+private:
     static const unsigned char CONTAINER_TYPE = ContainerType::DATABASE;
     short                 m_name_length;
     const char*           m_name = nullptr;

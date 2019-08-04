@@ -13,6 +13,7 @@
 namespace cjar
 {
 void _printBytes(unsigned char data[], int size);
+void _printString(DataBase* dbase);
 int _writeToFile(unsigned char* buffer, int count, const char* path);
 int _readFromFile(unsigned char* buffer, unsigned long len, const char* path);
 unsigned long _fileSize(const char* path);
@@ -66,9 +67,14 @@ public:
     return error;
   }
 
-  inline void print(){
+  // TODO: create toString() method
+  inline void printBytes(){
     assert(m_buffer != nullptr);
     _printBytes(m_buffer, m_buffer_size);
+  }
+  inline void printString(){
+    assert(m_buffer != nullptr);
+    _printString(m_dbase);
   }
 
   inline void readFromBuffer(unsigned char* buffer){
@@ -117,6 +123,87 @@ inline void _printBytes(unsigned char data[], int size){
   }
 
   printf("\n");
+}
+
+inline void _printString(DataBase* dbase){
+  for (int i=0; i<80; i++) printf("=");printf("\n");
+  printf("HEADER : %s VERSION = %04x\nDataBase : %s\n", dbase->HEADER, dbase->VERSION, dbase->getName() );
+  for (int i=0; i<80; i++) printf("=");printf("\n\n");
+
+  for (auto o : dbase->getObjects()){
+    printf("%s:\n", o->getName());
+    for (auto f: o->getFields()){
+      switch(f->getType()){
+        case CHAR    : printf("\t%-15s = %c\n",f->getName(), f->getValue().c );   break;
+        case SHORT   : printf("\t%-15s = %u\n",f->getName(), f->getValue().s );  break;
+        case INTEGER : printf("\t%-15s = %u\n",f->getName(), f->getValue().i );    break;
+        case LONG    : printf("\t%-15s = %lu\n",f->getName(), f->getValue().l );   break;
+        case BOOLEAN : printf("\t%-15s = %s\n",f->getName(), (f->getValue().b)?"true":"false" );   break;
+        case FLOAT   : printf("\t%-15s = %f\n",f->getName(), f->getValue().f );  break;
+        case DOUBLE  : printf("\t%-15s = %f\n",f->getName(), f->getValue().d ); break;
+      }
+    }
+    for (auto a : o->getArrays()){
+      if (a->canBeString()) printf("\t%-15s = %s\n", a->getName(), a->getString() );
+      else{
+        printf("\t%-15s = { ", a->getName() );
+        switch (a->getType()){
+          case CHAR    :
+          {
+              char* arr = a->getValues<char>();
+              for (int i=0; i<a->getCount(); i++){ printf("%u, %s",arr[i], ((i+1)%16)?"":"\n\t\t\t") ; } 
+              delete[] arr;
+              break;
+          }
+          case SHORT   :
+          {
+              short* arr = a->getValues<short>();
+              for (int i=0; i<a->getCount(); i++){ printf("%u, %s",arr[i], ((i+1)%16)?"":"\n\t\t\t" ); } 
+              delete[] arr;
+              break;
+          }
+          case INTEGER :
+          {
+              int* arr = a->getValues<int>();
+              for (int i=0; i<a->getCount(); i++){ printf("%u, %s",arr[i], ((i+1)%16)?"":"\n\t\t\t" ); } 
+              delete[] arr;
+              break;
+          }
+          case LONG    :
+          {
+              long* arr = a->getValues<long>();
+              for (int i=0; i<a->getCount(); i++){ printf("%lu, %s",arr[i], ((i+1)%16)?"":"\n\t\t\t" ); } 
+              delete[] arr;
+              break;
+          }
+          case BOOLEAN :
+          {
+              bool* arr = a->getValues<bool>();
+              for (int i=0; i<a->getCount(); i++){ printf("%s, %s",arr[i]?"true":"false", ((i+1)%16)?"":"\n\t\t\t" ); } 
+              delete[] arr;
+              break;
+          }
+          case FLOAT   :
+          {
+              float* arr = a->getValues<float>();
+              for (int i=0; i<a->getCount(); i++){ printf("%f, %s",arr[i], ((i+1)%16)?"":"\n\t\t\t" ); } 
+              delete[] arr;
+              break;
+          }
+          case DOUBLE  :
+          {
+              double* arr = a->getValues<double>();
+              for (int i=0; i<a->getCount(); i++){ printf("%f, %s",arr[i], ((i+1)%16)?"":"\n\t\t\t" ); } 
+              delete[] arr;
+              break;
+          }
+        } printf("}\n");
+      } 
+    } printf("\n");
+  }
+
+  for (int i=0; i<80; i++) printf("=");printf("\n");
+
 }
 
 

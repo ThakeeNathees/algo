@@ -129,6 +129,9 @@ public:
     inline Value getValue(){
         return m_value;
     }
+    inline Type getType(){
+        return (Type)m_data_type;
+    }
 
     inline void writeBytes(unsigned char* stream, int* pointer){
         SerialWriter::writeBytes(stream, pointer, CONTAINER_TYPE);

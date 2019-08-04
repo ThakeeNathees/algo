@@ -63,6 +63,7 @@ public:
         m_field_count++;
         m_size += field->getSize();
     }
+    
     inline void addArray(Array* array){
         m_arrays.push_back(array);
         m_array_count++;
