@@ -20,7 +20,7 @@ int main()
   cjar::Object* obj0 = cjar::Object::create("Obj0");
   obj0->addField(i_val)->addArray(i_arr)->addArray(str_arr);
 
-  cjar::Object* obj1 = cjar::Object::create("Obj2");
+  cjar::Object* obj1 = cjar::Object::create("Obj1");
   obj1->addField( cjar::Field::Bool("bool_val", true) );
 
   // database
