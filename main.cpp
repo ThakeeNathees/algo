@@ -3,7 +3,8 @@
 
 int main()
 {
-/*int size = 10;
+/*
+  int size = 10;
   int* int_array = new int[size];
   for (int i=0; i<size; i++) int_array[i] = i;
 
@@ -21,22 +22,33 @@ int main()
   obj0->addField(i_val)->addArray(i_arr)->addArray(str_arr);
 
   cjar::Object* obj1 = cjar::Object::create("Obj1");
-  obj1->addField( cjar::Field::Bool("bool_val", true) );
+  cjar::Object* obj2 = cjar::Object::create("Obj2");
+
+  obj1->addField( cjar::Field::Bool("bool_val", true) )->addObject(obj2);
 
   // database
   cjar::DataBase* dbase = cjar::DataBase::create("dbase");
-  dbase->addObject(obj0)->addObject(obj1);*/
+  dbase->addObject(obj0)->addObject(obj1);
+  //*/
 
 
   cjar::Jar jar("MyJar");
   jar.readFromFile("MyJar.cjar");
+  //jar.setDataBase(dbase);
+  //jar.convertToBinary();
+  //jar.writeToFile();
   jar.printString();
+  //jar.printBytes();
 
+//*
   cjar::DataBase* dbase = jar.getDataBase();
-  int int_val     = dbase->getObjects()[0]->getFields()[0]->getValue<int>();
-  int* int_array  = dbase->getObjects()[0]->getArrays()[0]->getValues<int>();
-  const char* str = dbase->getObjects()[0]->getArrays()[1]->getString();
-  bool bool_val   = dbase->getObjects()[1]->getFields()[0]->getValue<bool>();
+  int int_val        = dbase->findObject("Obj0")->findField("int_val")->getValue<int>();  
+  int* int_array     = dbase->findObject("Obj0")->findArray("int_array")->getValues<int>();
+  const char* str    = dbase->findObject("Obj0")->findArray("str")->getString();
+  bool bool_val      = dbase->findObject("Obj1")->findField("bool_val")->getValue<bool>();
+  cjar::Object* obj2 = dbase->findObject("Obj1")->findObject("Obj2");
+
+//*/
 
   return 0;
 }

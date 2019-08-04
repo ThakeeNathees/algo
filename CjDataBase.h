@@ -51,6 +51,12 @@ public:
     inline std::vector<Object*>& getObjects(){
         return m_objects;
     }
+    inline Object* findObject(const char* name){
+        for (auto object : m_objects){
+            if( isStrEquals(object->getName(), name) ){ return object; }
+        }
+        return nullptr;
+    }
 
     inline DataBase* addObject(Object* object){
         m_objects.push_back(object);

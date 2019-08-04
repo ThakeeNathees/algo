@@ -127,7 +127,7 @@ inline void _printBytes(unsigned char data[], int size){
 
 inline void _printString(DataBase* dbase){
   for (int i=0; i<80; i++) printf("=");printf("\n");
-  printf("HEADER : %s VERSION = %04x\nDataBase : %s\n", dbase->HEADER, dbase->VERSION, dbase->getName() );
+  printf("HEADER   : %s VERSION : %04x\nDataBase : %s\n", dbase->HEADER, dbase->VERSION, dbase->getName() );
   for (int i=0; i<80; i++) printf("=");printf("\n\n");
 
   for (auto o : dbase->getObjects()){
@@ -198,8 +198,12 @@ inline void _printString(DataBase* dbase){
               break;
           }
         } printf("}\n");
-      } 
-    } printf("\n");
+      }
+    } 
+    for (auto _o :o->getObject() ){
+        printf("\t%-15s : %s\n","[object]",_o->getName());
+    }
+    printf("\n");
   }
 
   for (int i=0; i<80; i++) printf("=");printf("\n");

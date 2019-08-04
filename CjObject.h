@@ -12,10 +12,12 @@ private:
     short                 m_name_length;
     const char*           m_name = nullptr;
     unsigned int          m_field_count = 0;
-    std::vector<Field*> m_fields;
+    std::vector<Field*>   m_fields;
     unsigned int          m_array_count = 0;
-    std::vector<Array*> m_arrays;
-    int m_size = sizeof(char) + sizeof(short) + sizeof(int) + sizeof(int) + sizeof(int);
+    std::vector<Array*>   m_arrays;
+    unsigned int          m_object_count;
+    std::vector<Object*>  m_objects;
+    int m_size = sizeof(char) + sizeof(short) + sizeof(int) + sizeof(int) + sizeof(int) + sizeof(int);
     
     inline Object(){}
     inline Object(const char* name){
@@ -57,6 +59,9 @@ public:
     inline std::vector<Array*>& getArrays(){
         return m_arrays;
     }
+    inline std::vector<Object*>& getObject(){
+        return m_objects;
+    }
 
     inline Object* addField(Field* field){
         m_fields.push_back(field);
@@ -64,12 +69,36 @@ public:
         m_size += field->getSize();
         return this;
     }
-    
     inline Object* addArray(Array* array){
         m_arrays.push_back(array);
         m_array_count++;
         m_size += array->getSize();
         return this;
+    }
+    inline Object* addObject(Object* object){
+        m_objects.push_back(object);
+        m_object_count++;
+        m_size += object->getSize();
+        return this;
+    }
+
+    inline Field* findField(const char* name){
+        for (auto field : m_fields){
+            if( isStrEquals(field->getName(), name) ) { return field; }
+        }
+        return nullptr;
+    }
+    inline Array* findArray(const char* name){
+        for (auto array : m_arrays){
+            if( isStrEquals(array->getName(), name) ){ return array; }
+        }
+        return nullptr;
+    }
+    inline Object* findObject(const char* name){
+        for (auto object : m_objects){
+            if( isStrEquals(object->getName(), name) ){ return object; }
+        }
+        return nullptr;
     }
 
     inline void writeBytes(unsigned char* stream, int* pointer){
@@ -83,6 +112,10 @@ public:
         SerialWriter::writeBytes(stream, pointer, m_array_count);
         for (Array* array : m_arrays) {
             array->writeBytes(stream, pointer);
+        }
+        SerialWriter::writeBytes(stream, pointer, m_object_count);
+        for (Object* object : m_objects) {
+            object->writeBytes(stream, pointer);
         }
     }
 
@@ -104,6 +137,11 @@ public:
         for (int i=0; i<object->m_array_count; i++){
             Array* array = Array::Deserialize(stream, pointer);
             object->m_arrays.push_back(array);
+        }
+        object->m_object_count = SerialReader::readInt(stream, pointer);
+        for (int i=0; i<object->m_object_count; i++){
+            Object* obj = Object::Deserialize(stream, pointer);
+            object->m_objects.push_back(obj);
         }
         return object;
     }

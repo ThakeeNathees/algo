@@ -82,4 +82,13 @@ namespace cjar
         return _ret;
     }
 
+    bool isStrEquals(const char* str1, const char* str2){
+        int i=0;
+        while( str1[i] ){
+            if( !str2[i] ) return false;
+            if( str1[i] != str2[i++] ) return false;
+        }
+        return ( str2[i] == 0 );
+    }
+
 }

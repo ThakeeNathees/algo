@@ -29,7 +29,9 @@ int main()
   obj0->addField(i_val)->addArray(i_arr)->addArray(str_arr);
 
   cjar::Object* obj1 = cjar::Object::create("Obj1");
-  obj1->addField( cjar::Field::Bool("bool_val", true) );
+  cjar::Object* obj2 = cjar::Object::create("Obj2");
+
+  obj1->addField( cjar::Field::Bool("bool_val", true) )->addObject(obj2);
 
   // database
   cjar::DataBase* dbase = cjar::DataBase::create("dbase");
@@ -39,8 +41,8 @@ int main()
   cjar::Jar jar("MyJar");
   jar.setDataBase(dbase);
   jar.convertToBinary();
+  jar.writeToFile();
   jar.printBytes();
-  jar.writeToFile(); // writes to MyJar.cjar
 
   return 0;
 }
@@ -48,22 +50,22 @@ int main()
 binary data
 ```
 00 0a 43 6f 6f 6b 69 65 2d 4a 61 72 01 00 04 00  . . C o o k i e - J a r . . . .
-00 00 c1 00 05 64 62 61 73 65 00 00 00 02 03 00  . . . . . d b a s e . . . . . .
-00 00 7f 00 04 4f 62 6a 30 00 00 00 01 01 00 00  . . . . . O b j 0 . . . . . . .
+00 00 e0 00 05 64 62 61 73 65 00 00 00 02 03 00  . . . . . d b a s e . . . . . .
+00 00 83 00 04 4f 62 6a 30 00 00 00 01 01 00 00  . . . . . O b j 0 . . . . . . .
 00 13 00 07 69 6e 74 5f 76 61 6c 04 00 00 00 20  . . . . i n t _ v a l . . . .  
 00 00 00 02 02 00 00 00 3d 00 09 69 6e 74 5f 61  . . . . . . . . = . . i n t _ a
 72 72 61 79 04 00 00 00 0a 00 00 00 00 00 00 00  r r a y . . . . . . . . . . . .
 01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00  . . . . . . . . . . . . . . . .
 05 00 00 00 06 00 00 00 07 00 00 00 08 00 00 00  . . . . . . . . . . . . . . . .
 09 02 00 00 00 1c 00 03 73 74 72 01 00 00 00 0d  . . . . . . . . s t r . . . . .
-68 65 6c 6c 6f 20 77 6f 72 6c 64 21 00 03 00 00  h e l l o   w o r l d ! . . . .
-00 24 00 04 4f 62 6a 31 00 00 00 01 01 00 00 00  . $ . . O b j 1 . . . . . . . .
-11 00 08 62 6f 6f 6c 5f 76 61 6c 02 01 00 00 00  . . . b o o l _ v a l . . . . .
-00                                               .
+68 65 6c 6c 6f 20 77 6f 72 6c 64 21 00 00 00 00  h e l l o   w o r l d ! . . . .
+00 03 00 00 00 3f 00 04 4f 62 6a 31 00 00 00 01  . . . . . ? . . O b j 1 . . . .
+01 00 00 00 11 00 08 62 6f 6f 6c 5f 76 61 6c 02  . . . . . . . b o o l _ v a l .
+01 00 00 00 00 00 00 00 01 03 00 00 00 17 00 04  . . . . . . . . . . . . . . . .
+4f 62 6a 32 00 00 00 00 00 00 00 00 00 00 00 00  O b j 2 . . . . . . . . . . . .
 ```
 ---
 ```c++
-
 #include "Cookie-Jar.h"
 
 int main()
@@ -72,11 +74,13 @@ int main()
   jar.readFromFile("MyJar.cjar");
   jar.printString();
 
+
   cjar::DataBase* dbase = jar.getDataBase();
-  int int_val     = dbase->getObjects()[0]->getFields()[0]->getValue<int>();
-  int* int_array  = dbase->getObjects()[0]->getArrays()[0]->getValues<int>();
-  const char* str = dbase->getObjects()[0]->getArrays()[1]->getString();
-  bool bool_val   = dbase->getObjects()[1]->getFields()[0]->getValue<bool>();
+  int int_val        = dbase->findObject("Obj0")->findField("int_val")->getValue<int>();  
+  int* int_array     = dbase->findObject("Obj0")->findArray("int_array")->getValues<int>();
+  const char* str    = dbase->findObject("Obj0")->findArray("str")->getString();
+  bool bool_val      = dbase->findObject("Obj1")->findField("bool_val")->getValue<bool>();
+  cjar::Object* obj2 = dbase->findObject("Obj1")->findObject("Obj2");
 
   return 0;
 }
@@ -84,7 +88,7 @@ int main()
 console output
 ```
 ================================================================================
-HEADER : Cookie-Jar VERSION = 0100
+HEADER   : Cookie-Jar VERSION : 0100
 DataBase : dbase
 ================================================================================
 
@@ -95,6 +99,7 @@ Obj0:
 
 Obj1:
         bool_val        = true
+        [object]        : Obj2
 
 ================================================================================
 ```
