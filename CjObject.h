@@ -34,6 +34,8 @@ public:
             delete field_p;
         for (Array* array_p: m_arrays)
             delete array_p;
+        for (Object* object_p: m_objects)
+            delete object_p;
         delete[] m_name;
     }
 
