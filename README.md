@@ -1,5 +1,5 @@
 # Cookie-Jar
-A simple & fast C++ serialization header only library.
+A simple & fast C++ serialization library.
 
 ### Install
 It's a header only library just copy the source folder to your include path and use a C++11 compiler or use as a pre-compiled library.
