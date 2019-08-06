@@ -1,6 +1,7 @@
 #pragma once
 #include <stdio.h>
 #include <assert.h>
+#include <cstring>
 #include <vector>
 
 /* TODO: array copying 2 times 

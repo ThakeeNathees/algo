@@ -48,6 +48,19 @@ public:
         SerialWriter::writeBytes( array->m_data, &pointer, (char)0 );
         return array;
     }
+    // for c++ object
+    template<typename T>
+    inline static Array* CppObject(const char* name, const T& cpp_obj ){
+        int count = sizeof(cpp_obj);
+        Array* array = new Array();
+        array->setName(name);
+        array->m_data_type = Type::CHAR;
+        array->m_count = count;
+        array->m_size += sizeof(char) * count;
+        array->m_data = new unsigned char[ sizeof(char) * count ];
+        memcpy(array->m_data, &cpp_obj, sizeof(cpp_obj));
+        return array;
+    }
 
     inline static Array* Short(const char* name, short* data, unsigned int count ){
         return Short(name, (unsigned short*)data, count);
@@ -186,6 +199,11 @@ public:
             }
         }
         return values;
+    }
+
+    template <typename T>
+    inline T* getObject(){
+        return (T*) getValues<unsigned char>();
     }
 
     const char* getString(){ // array value is a string
