@@ -7,10 +7,8 @@ int main()
   int size = 10;
   int* int_array = new int[size];
   for (int i=0; i<size; i++) int_array[i] = i;
-
   int int_val = 32;
   const char* str = "hello world!";
-
   //fields & arrays
   cjar::Field* i_val = cjar::Field::Int("int_val",int_val);
   cjar::Array* i_arr = cjar::Array::Int("int_array",int_array, size);
@@ -20,12 +18,9 @@ int main()
   //objects
   cjar::Object* obj0 = cjar::Object::create("Obj0");
   obj0->addField(i_val)->addArray(i_arr)->addArray(str_arr);
-
   cjar::Object* obj1 = cjar::Object::create("Obj1");
   cjar::Object* obj2 = cjar::Object::create("Obj2");
-
   obj1->addField( cjar::Field::Bool("bool_val", true) )->addObject(obj2);
-
   // database
   cjar::DataBase* dbase = cjar::DataBase::create("dbase");
   dbase->addObject(obj0)->addObject(obj1);

@@ -165,23 +165,6 @@ public:
     inline Type getType(){
         return (Type)m_data_type;
     }
-    inline bool canBeString(){
-        if ( getType() != CHAR || m_data[m_count-1] != 0 ) return false;
-        for (int i=0; i<m_count-1; i++){
-            if ( m_data[i] < 0x20 || 0x7e < m_data[i] ) return false;
-        }
-        return true;
-    }
-
-
-    inline void writeBytes(unsigned char* stream, int* pointer){
-        SerialWriter::writeBytes(stream, pointer, CONTAINER_TYPE);
-        SerialWriter::writeBytes(stream, pointer, m_size);
-        SerialWriter::writeBytes(stream, pointer, m_name);
-        SerialWriter::writeBytes(stream, pointer, m_data_type);
-        SerialWriter::writeBytes(stream, pointer, m_count);
-        SerialWriter::writeBytes(stream, pointer, m_data, getTypeSize((Type)m_data_type) * m_count );
-    }
 
     template <typename T>
     T* getValues(){
@@ -201,17 +184,35 @@ public:
         return values;
     }
 
-    template <typename T>
-    inline T* getObject(){
-        return (T*) getValues<unsigned char>();
-    }
-
     const char* getString(){ // array value is a string
         int len = m_count * sizeof(char);
         int pointer = 0;
         char* _str = new char[ len + 1];
         SerialReader::readString(_str, len, m_data, &pointer);
         return _str;
+    }
+    
+    template <typename T>
+    inline T* getCppObject(){
+        return (T*) getValues<unsigned char>();
+    }
+    
+    inline bool canBeString(){
+        if ( getType() != CHAR || m_data[m_count-1] != 0 ) return false;
+        for (int i=0; i<m_count-1; i++){
+            if ( m_data[i] < 0x20 || 0x7e < m_data[i] ) return false;
+        }
+        return true;
+    }
+
+
+    inline void writeBytes(unsigned char* stream, int* pointer){
+        SerialWriter::writeBytes(stream, pointer, CONTAINER_TYPE);
+        SerialWriter::writeBytes(stream, pointer, m_size);
+        SerialWriter::writeBytes(stream, pointer, m_name);
+        SerialWriter::writeBytes(stream, pointer, m_data_type);
+        SerialWriter::writeBytes(stream, pointer, m_count);
+        SerialWriter::writeBytes(stream, pointer, m_data, getTypeSize((Type)m_data_type) * m_count );
     }
 
 
