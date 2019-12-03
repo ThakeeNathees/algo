@@ -1,4 +1,4 @@
-# Cookie-Jar
+# Serial-Jar
 A simple & fast C++ serialization library.
 
 ### Install
