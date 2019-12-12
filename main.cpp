@@ -35,6 +35,8 @@ int main()
   jar.printString();
   //jar.printBytes();
 
+  // edited by master
+  
 //*
   cjar::DataBase* dbase = jar.getDataBase();
   int int_val        = dbase->findObject("Obj0")->findField("int_val")->getValue<int>();  
