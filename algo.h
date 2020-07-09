@@ -18,37 +18,25 @@
 #include <vector>
 #include <map>
 
-class Tester {
-public:
-	Tester() {}
-
-	void run_tests(const std::string& p_name, int tests = 1) {
-		printf("------------------\nTest: %s\n------------------\n", p_name.c_str());
-		double avg = 0;
-		for (int i = 0; i < tests; i++) {
-			auto start = std::chrono::high_resolution_clock::now();
-			run();
-			auto end = std::chrono::high_resolution_clock::now();		
-			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-			printf("Test %2i time: %lli\n", i, duration.count());
-			avg = (avg * i + duration.count()) / (i + 1);
-		}
-		printf("------------------\nAverage time: %f\n------------------\n\n", avg);
-	}
-
-	virtual void run() = 0;
-
-};
-
-#define TIMER(m_name, m_func)                                                           \
-do{                                                                                     \
-	auto start = std::chrono::high_resolution_clock::now();                             \
-	m_func;                                                                             \
-	auto end = std::chrono::high_resolution_clock::now();                               \
-                                                                                        \
-	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start); \
-	std::cout << m_name << " | druation : " << duration.count() << std::endl;           \
+#if ALGO_DEBUG
+#define RUN(m_func) m_func;
+#else
+#define RUN(m_func)                                                                          \
+do {                                                                                         \
+	printf("------------------\nTest\n------------------\n");                                \
+	double avg = 0;                                                                          \
+	for (int i = 0; i < TEST_RUNS; i++) {                                                    \
+		auto start = std::chrono::high_resolution_clock::now();                              \
+		m_func;                                                                              \
+		auto end = std::chrono::high_resolution_clock::now();                                \
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);  \
+		printf("Test %2i time: %lli\n", i, duration.count());                                \
+		avg = (avg * i + duration.count()) / (i + 1);                                        \
+	}                                                                                        \
+	printf("------------------\nAverage time: %f\n------------------\n\n", avg);             \
 } while(false)
+#endif
+
 
 enum class Color {
 	BLACK = 0,

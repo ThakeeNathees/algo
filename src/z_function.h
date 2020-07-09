@@ -15,7 +15,7 @@ std::vector<int> z_function(const std::string& str) {
 
 	int l = 0, r = 0;
 	for (int i = 1; i < n; i++) {
-	#if ALGO_DEBUG
+#if ALGO_DEBUG
 		set_cursor_pos(0, 0);
 		for (int j = 0; j < str.size(); j++) {
 			if (j == l) printf("[");
@@ -35,7 +35,7 @@ std::vector<int> z_function(const std::string& str) {
 		}
 		printf("\n");
 		getchar();
-	#endif
+#endif
 
 		if (i >= r) {
 
@@ -47,9 +47,9 @@ std::vector<int> z_function(const std::string& str) {
 
 			if (i + z[i - l] < r) {
 				z[i] = z[i - l];
-			#if ALGO_DEBUG
+#if ALGO_DEBUG
 				copied.push_back(i);
-			#endif
+#endif
 			} else {
 				l = i;
 				while (r < n && str[r - l] == str[r]) r++;
@@ -61,3 +61,7 @@ std::vector<int> z_function(const std::string& str) {
 }
 
 
+
+/* TEST CASE:
+	RUN(z_function("aaabcxyzaaaabczaaczabbaaaaaabc"));
+*/
