@@ -11,12 +11,14 @@
 #include <unistd.h>
 #endif
 
+#include <algorithm>
 #include <chrono>
 #include <string>
 #include <sstream>
 #include <iostream>
 #include <vector>
 #include <map>
+#include <unordered_map>
 
 #if ALGO_DEBUG
 #define RUN(m_func) m_func;
@@ -36,6 +38,33 @@ do {                                                                            
 	printf("------------------\nAverage time: %f\n------------------\n\n", avg);             \
 } while(false)
 #endif
+
+
+template<typename T>
+void _vec_push_back(std::vector<T> & vec) {
+	return;
+}
+template<typename T, typename... Targs>
+void _vec_push_back(std::vector<T> & vec, T arg1, Targs... args) {
+	vec.push_back(arg1);
+	_vec_push_back(vec, args...);
+}
+
+template <typename T, typename... Targs>
+std::vector<T> Vector(Targs... args) {
+	std::vector<T> ret;
+	_vec_push_back(ret, args...);
+	return ret;
+}
+
+inline void printvec(const std::vector<int>& vec) {
+	printf("[");
+	for (int i = 0; i < vec.size(); i++) {
+		if (i != 0) printf(", ");
+		printf("%i", vec[i]);
+	}
+	printf("]\n");
+}
 
 
 enum class Color {
