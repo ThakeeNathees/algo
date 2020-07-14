@@ -18,7 +18,11 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <functional>
 #include <unordered_map>
+
+#define TEST_RUNS 10
+#define print(x) std::cout << (x) << std::endl
 
 #if ALGO_DEBUG
 #define RUN(m_func) m_func;
@@ -57,11 +61,12 @@ std::vector<T> Vector(Targs... args) {
 	return ret;
 }
 
-inline void printvec(const std::vector<int>& vec) {
+template<typename T>
+inline void printvec(const std::vector<T>& vec) {
 	printf("[");
 	for (int i = 0; i < vec.size(); i++) {
 		if (i != 0) printf(", ");
-		printf("%i", vec[i]);
+		printf("%s", std::to_string(vec[i]).c_str());
 	}
 	printf("]\n");
 }
@@ -90,4 +95,4 @@ enum class Color {
 void cprint(const char* p_msg, Color p_fg = Color::D_WHITE, Color p_bg = Color::BLACK);
 
 void sleep(unsigned milliseconds);
-void set_cursor_pos(int column, int line);
+void set_cursor_pos(int column=0, int line=0);

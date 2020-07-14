@@ -1,5 +1,5 @@
 #pragma once
-#include "../algo.h"
+#include "../../algo.h"
 
 // WARNING : Including this file more than one compilation unit will cause a compile time error
 //           this repo is not well coded to organize sources intentionally (only include in main.cpp).
