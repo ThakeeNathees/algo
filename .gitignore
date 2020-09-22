@@ -10,6 +10,9 @@ debug/
 *.vcxproj.filters
 *.vcxproj.user
 
+ref.txt
+encrypt.py
+
 # Prerequisites
 *.d
 

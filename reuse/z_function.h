@@ -1,13 +1,13 @@
 #pragma once
 #include "include.h"
 
-std::vector<int> z_function(const std::string& str) {
-	int n = str.size();
-	std::vector<int> z(n);
+std::vector<size_t> z_function(const std::string& str) {
+	size_t n = str.size();
+	std::vector<size_t> z(n);
 	z[0] = 0;
 
-	int l = 0, r = 0;
-	for (int i = 1; i < n; i++) {
+	size_t l = 0, r = 0;
+	for (size_t i = 1; i < n; i++) {
 
 		if (i >= r) {
 			l = r = i;
