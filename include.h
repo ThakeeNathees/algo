@@ -2,6 +2,7 @@
 
 // needed for debugging.
 #include <iostream>
+#include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -58,6 +59,65 @@ do {                                              \
     }                                             \
 } while (false)
 
+#define CHECK_EQ(m_result, m_expected)               \
+do {                                                 \
+    printf("LINE [" TOSTRING(__LINE__) "]: ");       \
+    if (m_result != m_expected) {                    \
+        cprint("FAILURE\n", Color::L_RED);           \
+        printf("EXPECTED: %s\n", m_expected.c_str()); \
+        printf("RESULT: %s\n", m_result.c_str());   \
+    } else {                                         \
+        cprint("SUCCESS\n", Color::L_GREEN);         \
+    }                                                \
+}  while (false)
+
+
+
+////////////////////////////////////////////////////
+
+#define MAIN _main
+#define TEST main
+
+// Yes it's a global variable and I know.
+std::string _INPUT_BUFF = R"()";
+std::string _OUTPUT_BUFF = R"()";
+std::string _EXPECTED_OUTPUT = R"()";
+
+#define REDIRECT()                                   \
+class Redirect {									 \
+	std::istringstream isstream;					 \
+	std::ostringstream osstream;					 \
+	std::streambuf* istream_buf;					 \
+	std::streambuf* ostream_buf;					 \
+public:												 \
+	Redirect() {									 \
+		istream_buf = std::cin.rdbuf();				 \
+		isstream = std::istringstream(_INPUT_BUFF);	 \
+		std::cin.rdbuf(isstream.rdbuf());			 \
+		ostream_buf = std::cout.rdbuf();			 \
+		osstream = std::ostringstream(_OUTPUT_BUFF); \
+		std::cout.rdbuf(osstream.rdbuf());			 \
+	}												 \
+	~Redirect() {									 \
+		_OUTPUT_BUFF = strip(osstream.str());	     \
+		std::cin.rdbuf(istream_buf);				 \
+		std::cout.rdbuf(ostream_buf);				 \
+	}												 \
+};													 \
+Redirect redirect
+
+#define RUN_MAIN(m_input_buff)                       \
+	_INPUT_BUFF = strip(m_input_buff);               \
+	_OUTPUT_BUFF = "";                               \
+	MAIN()
+
+#define TEST_MAIN(m_input_buff, m_output_buff)       \
+	_EXPECTED_OUTPUT = strip(m_output_buff);         \
+	RUN_MAIN(m_input_buff);                          \
+	CHECK_EQ(_OUTPUT_BUFF, _EXPECTED_OUTPUT)
+
+////////////////////////////////////////////////////
+
 enum class Color {
     BLACK = 0,
 
@@ -83,6 +143,7 @@ enum class Color {
 
 void set_cursor_pos(int column, int line);
 void cprint(const char* p_msg, Color p_fg, Color p_bg);
+std::string strip(const std::string& str);
 
 #ifdef CPP_IMPL
 static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -115,6 +176,27 @@ void cprint(const char* p_msg, Color p_fg, Color p_bg = Color::BLACK)
     SET_CCOLOR(p_fg, p_bg);
     printf(p_msg);
     SET_CCOLOR(Color::L_WHITE, Color::BLACK);
+}
+
+
+std::string strip(const std::string& str) {
+    size_t begin = 0, end = str.size();
+
+    while (true) {
+        if (begin >= str.size()) return "";
+        if (str[begin] != ' ' && str[begin] != '\n') {
+            break;
+        }
+        begin++;
+}
+
+    while (true) {
+        if (str[end - 1] != ' ' && str[end - 1] != '\n') {
+            break;
+        }
+        end--;
+    }
+    return str.substr(begin, end - begin);
 }
 
 #endif // CPP_IMPL
