@@ -1,11 +1,18 @@
 #pragma once
 
+// HEADERS /////////////////////////////////////////////////////
 // needed for debugging.
 #include <iostream>
 #include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
+#ifdef _WIN32
+    #include <windows.h>
+#else
+    #include <unistd.h>
+#endif
+
 
 // data_structure : choose wisely.
 #if 0
@@ -22,29 +29,10 @@
 #include <vector>
 #endif
 
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
+// MACROS //////////////////////////////////////////////////
 
-
-template <class Type, class... Types>
-void print(const Type& arg, const Types&... args) {
-    std::cout << arg;
-    ((std::cout << " " << args), ..., (std::cout << std::endl));
-}
-
-//#define print(x) std::cout << (x) << std::endl
-template <typename T>
-void print_vector(const std::vector<T>& x) {
-    printf("[ ");
-    for (int i = 0; i < x.size(); i++) {
-        if (i != 0) printf(", ");
-        std::cout << (x[i]);
-    }
-    printf(" ]\n");
-}
+#define MAIN _main
+#define TEST main
 
 #define STR(x) #x
 #define TOSTRING(x) STR(x)
@@ -59,25 +47,19 @@ do {                                              \
     }                                             \
 } while (false)
 
-#define CHECK_EQ(m_result, m_expected)               \
-do {                                                 \
-    printf("LINE [" TOSTRING(__LINE__) "]: ");       \
-    if (m_result != m_expected) {                    \
-        cprint("FAILURE\n", Color::L_RED);           \
-        printf("EXPECTED: %s\n", m_expected.c_str()); \
-        printf("RESULT: %s\n", m_result.c_str());   \
-    } else {                                         \
-        cprint("SUCCESS\n", Color::L_GREEN);         \
-    }                                                \
+#define CHECK_EQ(m_result, m_expected)                    \
+do {                                                      \
+    printf("LINE [" TOSTRING(__LINE__) "]: ");            \
+    if (m_result != m_expected) {                         \
+        cprint("FAILURE\n", Color::L_RED);                \
+        printf("\tEXPECTED : %s\n", m_expected.c_str());  \
+        printf("\tRESULT   : %s\n", m_result.c_str());    \
+    } else {                                              \
+        cprint("SUCCESS\n", Color::L_GREEN);              \
+    }                                                     \
 }  while (false)
 
-
-
-////////////////////////////////////////////////////
-
-#define MAIN _main
-#define TEST main
-
+#ifdef CPP_IMPL
 // Yes it's a global variable and I know.
 std::string _INPUT_BUFF = R"()";
 std::string _OUTPUT_BUFF = R"()";
@@ -116,7 +98,9 @@ Redirect redirect
 	RUN_MAIN(m_input_buff);                          \
 	CHECK_EQ(_OUTPUT_BUFF, _EXPECTED_OUTPUT)
 
-////////////////////////////////////////////////////
+#endif // CPP_IMPL
+
+// DECLARATIONS //////////////////////////////////////////////////
 
 enum class Color {
     BLACK = 0,
@@ -139,11 +123,53 @@ enum class Color {
     D_WHITE = 15,
 };
 
+std::string strip(const std::string& str);
+
+template <class Type, class... Types>
+void print(const Type& arg, const Types&... args) {
+    std::cout << arg;
+    ((std::cout << " " << args), ..., (std::cout << std::endl));
+}
+
+//#define print(x) std::cout << (x) << std::endl
+template <typename T>
+void print_vector(const std::vector<T>& x) {
+    printf("[ ");
+    for (int i = 0; i < x.size(); i++) {
+        if (i != 0) printf(", ");
+        std::cout << (x[i]);
+    }
+    printf(" ]\n");
+}
+
+// CPP_IMPL /////////////////////////////////////////////////////////
+
+#ifdef CPP_IMPL
+std::string strip(const std::string& str) {
+    size_t begin = 0, end = str.size();
+
+    while (true) {
+        if (begin >= str.size()) return "";
+        if (str[begin] != ' ' && str[begin] != '\n') {
+            break;
+        }
+        begin++;
+    }
+
+    while (true) {
+        if (str[end - 1] != ' ' && str[end - 1] != '\n') {
+            break;
+        }
+        end--;
+    }
+    return str.substr(begin, end - begin);
+}
+#endif // CPP_IMPL
+
 #ifdef _WIN32
 
 void set_cursor_pos(int column, int line);
 void cprint(const char* p_msg, Color p_fg, Color p_bg);
-std::string strip(const std::string& str);
 
 #ifdef CPP_IMPL
 static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -176,27 +202,6 @@ void cprint(const char* p_msg, Color p_fg, Color p_bg = Color::BLACK)
     SET_CCOLOR(p_fg, p_bg);
     printf(p_msg);
     SET_CCOLOR(Color::L_WHITE, Color::BLACK);
-}
-
-
-std::string strip(const std::string& str) {
-    size_t begin = 0, end = str.size();
-
-    while (true) {
-        if (begin >= str.size()) return "";
-        if (str[begin] != ' ' && str[begin] != '\n') {
-            break;
-        }
-        begin++;
-}
-
-    while (true) {
-        if (str[end - 1] != ' ' && str[end - 1] != '\n') {
-            break;
-        }
-        end--;
-    }
-    return str.substr(begin, end - begin);
 }
 
 #endif // CPP_IMPL

@@ -1,4 +1,4 @@
-﻿
+
 // Headers ////////////////////////////////////////////////////
 #include <algorithm>
 #include <iostream>
@@ -6,11 +6,11 @@
 
 // Macros //////////////////////////////////////////////////////
 #ifdef _TESTING
-	#define CPP_IMPL
-	#include "include.h"
+#define CPP_IMPL
+#include "include.h"
 #else
-	#define MAIN main
-	#define REDIRECT()
+#define MAIN main
+#define REDIRECT()
 #endif
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
@@ -39,4 +39,3 @@ int TEST() {
 
 }
 #endif // _TESTING
-
