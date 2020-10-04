@@ -52,8 +52,9 @@ do {                                                      \
     printf("LINE [" TOSTRING(__LINE__) "]: ");            \
     if (m_result != m_expected) {                         \
         cprint("FAILURE\n", Color::L_RED);                \
-        printf("\tEXPECTED : %s\n", m_expected.c_str());  \
-        printf("\tRESULT   : %s\n", m_result.c_str());    \
+        /* TODO: implement const char* to_string() method for vector, etc etc*/ \
+        /*printf("\tEXPECTED : %s\n", m_expected.c_str());*/ \
+        /*printf("\tRESULT   : %s\n", m_result.c_str());  */ \
     } else {                                              \
         cprint("SUCCESS\n", Color::L_GREEN);              \
     }                                                     \
@@ -93,10 +94,17 @@ Redirect redirect
 	_OUTPUT_BUFF = "";                               \
 	MAIN()
 
-#define TEST_MAIN(m_input_buff, m_output_buff)       \
-	_EXPECTED_OUTPUT = strip(m_output_buff);         \
-	RUN_MAIN(m_input_buff);                          \
-	CHECK_EQ(_OUTPUT_BUFF, _EXPECTED_OUTPUT)
+#define TEST_MAIN(m_input_buff, m_output_buff)                   \
+	_EXPECTED_OUTPUT = strip(m_output_buff);                     \
+	RUN_MAIN(m_input_buff);                                      \
+	printf("LINE [" TOSTRING(__LINE__) "]: ");                   \
+	if (_OUTPUT_BUFF != _EXPECTED_OUTPUT ) {                     \
+	    cprint("FAILURE\n", Color::L_RED);                       \
+	    cprint("\tEXPECTED : ", Color::L_YELLOW); printf("%s\n", _EXPECTED_OUTPUT .c_str());  \
+	    cprint("\tRESULT   : ", Color::L_YELLOW); printf("%s\n", _OUTPUT_BUFF.c_str());       \
+	} else {                                                     \
+	    cprint("SUCCESS\n", Color::L_GREEN);                     \
+	}
 
 #endif // CPP_IMPL
 
