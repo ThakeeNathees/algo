@@ -2,32 +2,19 @@
 
 // HEADERS /////////////////////////////////////////////////////
 // needed for debugging.
+#include <assert.h>
 #include <iostream>
 #include <functional>
 #include <sstream>
 #include <string>
 #include <vector>
 #ifdef _WIN32
-    #include <windows.h>
+	#define NOMINMAX
+	#include <windows.h>
 #else
-    #include <unistd.h>
+	#include <unistd.h>
 #endif
 
-
-// data_structure : choose wisely.
-#if 0
-#include <algorithm>
-#include <chrono>
-#include <deque>
-#include <map>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <stack>
-#include <string>
-#include <unordered_map>
-#include <vector>
-#endif
 
 // MACROS //////////////////////////////////////////////////
 
@@ -37,31 +24,43 @@
 #define STR(x) #x
 #define TOSTRING(x) STR(x)
 
-#define CHECK(m_exp)                              \
-do {                                              \
-    printf("LINE [" TOSTRING(__LINE__) "]: ");    \
-    if (!(m_exp)) {                               \
-        cprint("FAILURE\n", Color::L_RED);        \
-    } else {                                      \
-        cprint("SUCCESS\n", Color::L_GREEN);      \
-    }                                             \
+#define CHECK(m_exp)                                \
+do {                                                \
+	printf("TEST (line:" TOSTRING(__LINE__) "): "); \
+	if (!(m_exp)) {                                 \
+ 	   cprint("FAILURE\n", Color::L_RED);           \
+	} else {                                        \
+		cprint("SUCCESS\n", Color::L_GREEN);        \
+	}                                               \
 } while (false)
 
-#define CHECK_EQ(m_result, m_expected)                    \
-do {                                                      \
-    printf("LINE [" TOSTRING(__LINE__) "]: ");            \
-    if (m_result != m_expected) {                         \
-        cprint("FAILURE\n", Color::L_RED);                \
-        /* TODO: implement const char* to_string() method for vector, etc etc*/ \
-        /*printf("\tEXPECTED : %s\n", m_expected.c_str());*/ \
-        /*printf("\tRESULT   : %s\n", m_result.c_str());  */ \
-    } else {                                              \
-        cprint("SUCCESS\n", Color::L_GREEN);              \
-    }                                                     \
+#define CHECK_EQ(m_result, m_expected)                               \
+do {                                                                 \
+	printf("TEST (line:" TOSTRING(__LINE__) "): ");                  \
+	if (m_result != m_expected) {                                    \
+		cprint("FAILURE\n", Color::L_RED);                           \
+		printf("\tEXPECTED : %s\n", to_string(m_expected).c_str());  \
+		printf("\tRESULT   : %s\n", to_string(m_result).c_str());    \
+	} else {                                                         \
+		cprint("SUCCESS\n", Color::L_GREEN);                         \
+	}                                                                \
 }  while (false)
 
+
 #ifdef CPP_IMPL
-// Yes it's a global variable and I know.
+// Yes it's a global variable I know.
+std::chrono::steady_clock::time_point g_t0;
+std::chrono::duration<double> g_duration;
+int g_timer_line;
+// for timeing a piece of code on the
+#define TIMER_START() g_timer_line = __LINE__; g_t0 = std::chrono::steady_clock::now()
+#define TIMER_END()                                 \
+	printf("TIMER (line:%i): ", g_timer_line);      \
+	g_duration = std::chrono::steady_clock::now() - g_t0; cprint(to_string(g_duration.count() * 1000).append(" ms\n").c_str(), Color::L_SKYBLUE)
+#endif
+
+#ifdef CPP_IMPL
+// Yes it's a global variable I know.
 std::string _INPUT_BUFF = R"()";
 std::string _OUTPUT_BUFF = R"()";
 std::string _EXPECTED_OUTPUT = R"()";
@@ -82,7 +81,7 @@ public:												 \
 		std::cout.rdbuf(osstream.rdbuf());			 \
 	}												 \
 	~Redirect() {									 \
-		_OUTPUT_BUFF = strip(osstream.str());	     \
+		_OUTPUT_BUFF = strip(osstream.str());		 \
 		std::cin.rdbuf(istream_buf);				 \
 		std::cout.rdbuf(ostream_buf);				 \
 	}												 \
@@ -99,11 +98,11 @@ Redirect redirect
 	RUN_MAIN(m_input_buff);                                      \
 	printf("LINE [" TOSTRING(__LINE__) "]: ");                   \
 	if (_OUTPUT_BUFF != _EXPECTED_OUTPUT ) {                     \
-	    cprint("FAILURE\n", Color::L_RED);                       \
-	    cprint("\tEXPECTED : ", Color::L_YELLOW); printf("%s\n", _EXPECTED_OUTPUT .c_str());  \
-	    cprint("\tRESULT   : ", Color::L_YELLOW); printf("%s\n", _OUTPUT_BUFF.c_str());       \
+		cprint("FAILURE\n", Color::L_RED);                       \
+		cprint("\tEXPECTED : ", Color::L_YELLOW); printf("%s\n", _EXPECTED_OUTPUT .c_str());  \
+		cprint("\tRESULT   : ", Color::L_YELLOW); printf("%s\n", _OUTPUT_BUFF.c_str());       \
 	} else {                                                     \
-	    cprint("SUCCESS\n", Color::L_GREEN);                     \
+		cprint("SUCCESS\n", Color::L_GREEN);                     \
 	}
 
 #endif // CPP_IMPL
@@ -111,67 +110,102 @@ Redirect redirect
 // DECLARATIONS //////////////////////////////////////////////////
 
 enum class Color {
-    BLACK = 0,
+	BLACK = 0,
 
-    L_BLUE = 1,
-    L_GREEN = 2,
-    L_SKYBLUE = 3,
-    L_RED = 4,
-    L_PINK = 5,
-    L_YELLOW = 6,
-    L_WHITE = 7,
-    L_GRAY = 8,
-
-    D_BLUE = 9,
-    D_GREEN = 10,
-    D_SKYBLUE = 11,
-    D_RED = 12,
-    D_PINK = 13,
-    D_YELLOW = 14,
-    D_WHITE = 15,
+	L_BLUE = 1,
+	L_GREEN = 2,
+	L_SKYBLUE = 3,
+	L_RED = 4,
+	L_PINK = 5,
+	L_YELLOW = 6,
+	L_WHITE = 7,
+	L_GRAY = 8,
+	
+	D_BLUE = 9,
+	D_GREEN = 10,
+	D_SKYBLUE = 11,
+	D_RED = 12,
+	D_PINK = 13,
+	D_YELLOW = 14,
+	D_WHITE = 15,
 };
 
 std::string strip(const std::string& str);
 
 template <class Type, class... Types>
 void print(const Type& arg, const Types&... args) {
-    std::cout << arg;
-    ((std::cout << " " << args), ..., (std::cout << std::endl));
+	std::cout << arg;
+	((std::cout << " " << args), ..., (std::cout << std::endl));
 }
 
 //#define print(x) std::cout << (x) << std::endl
 template <typename T>
 void print_vector(const std::vector<T>& x) {
-    printf("[ ");
-    for (int i = 0; i < x.size(); i++) {
-        if (i != 0) printf(", ");
-        std::cout << (x[i]);
-    }
-    printf(" ]\n");
+	printf("[ ");
+	for (int i = 0; i < x.size(); i++) {
+		if (i != 0) printf(", ");
+		std::cout << (x[i]);
+	}
+	printf(" ]\n");
+}
+
+
+template <typename T>
+std::string to_string(T value) {
+	if constexpr (std::is_arithmetic<T>::value) {
+		return std::to_string(value);
+	} else if constexpr (std::is_same<T, std::string>::value || std::is_same<T, const std::string&>::value) {
+		return value;
+	} else if constexpr (
+		std::is_same<T, std::vector<int>>::value ||
+		std::is_same<T, std::vector<long>>::value ||
+		std::is_same<T, std::vector<float>>::value ||
+		std::is_same<T, std::vector<double>>::value
+		) {
+		std::string ret = "[ ";
+		for (size_t i = 0; i < value.size(); i++) {
+			if (i != 0) ret += ", ";
+			ret += std::to_string(value[i]);
+		}
+		ret += " ]";
+		return ret;
+	} else if constexpr (std::is_same<T, const char*>::value) {
+		return value;
+	}
+}
+
+template<typename... T>
+void _input(T... args) {
+	((std::cin >> (*args)), ...);
+}
+template<typename... T>
+void _output(T... args) {
+	((std::cout << args << " "), ...);
 }
 
 // CPP_IMPL /////////////////////////////////////////////////////////
 
 #ifdef CPP_IMPL
 std::string strip(const std::string& str) {
-    size_t begin = 0, end = str.size();
-
-    while (true) {
-        if (begin >= str.size()) return "";
-        if (str[begin] != ' ' && str[begin] != '\n') {
-            break;
-        }
-        begin++;
-    }
-
-    while (true) {
-        if (str[end - 1] != ' ' && str[end - 1] != '\n') {
-            break;
-        }
-        end--;
-    }
-    return str.substr(begin, end - begin);
+	size_t begin = 0, end = str.size();
+	
+	while (true) {
+		if (begin >= str.size()) return "";
+		if (str[begin] != ' ' && str[begin] != '\n') {
+			break;
+		}
+		begin++;
+	}
+	
+	while (true) {
+		if (str[end - 1] != ' ' && str[end - 1] != '\n') {
+			break;
+		}
+		end--;
+	}
+	return str.substr(begin, end - begin);
 }
+
 #endif // CPP_IMPL
 
 #ifdef _WIN32
@@ -184,39 +218,39 @@ static HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
 void set_cursor_pos(int column, int line)
 {
-    // Create a COORD structure and fill in its members.
-    // This specifies the new position of the cursor that we will set.
-    COORD coord;
-    coord.X = column;
-    coord.Y = line;
+	// Create a COORD structure and fill in its members.
+	// This specifies the new position of the cursor that we will set.
+	COORD coord;
+	coord.X = column;
+	coord.Y = line;
+	
+	// Obtain a handle to the console screen buffer.
+	// (You're just using the standard console, so you can use STD_OUTPUT_HANDLE
+	// in conjunction with the GetStdHandle() to retrieve the handle.)
+	// Note that because it is a standard handle, we don't need to close it.
+	//HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    // Obtain a handle to the console screen buffer.
-    // (You're just using the standard console, so you can use STD_OUTPUT_HANDLE
-    // in conjunction with the GetStdHandle() to retrieve the handle.)
-    // Note that because it is a standard handle, we don't need to close it.
-    //HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
-    // Finally, call the SetConsoleCursorPosition function.
-    if (!SetConsoleCursorPosition(hConsole, coord)) {
-        // Uh-oh! The function call failed, so you need to handle the error.
-        // You can call GetLastError() to get a more specific error code.
-        // ...
-    }
+	// Finally, call the SetConsoleCursorPosition function.
+	if (!SetConsoleCursorPosition(hConsole, coord)) {
+		// Uh-oh! The function call failed, so you need to handle the error.
+		// You can call GetLastError() to get a more specific error code.
+		// ...
+	}
 }
 
 #define SET_CCOLOR(m_fg, m_bg) SetConsoleTextAttribute(hConsole, (int)m_bg << 4 | (int)m_fg)
 void cprint(const char* p_msg, Color p_fg, Color p_bg = Color::BLACK)
 {
-    SET_CCOLOR(p_fg, p_bg);
-    printf(p_msg);
-    SET_CCOLOR(Color::L_WHITE, Color::BLACK);
+	SET_CCOLOR(p_fg, p_bg);
+	printf(p_msg);
+	SET_CCOLOR(Color::L_WHITE, Color::BLACK);
 }
 
 #endif // CPP_IMPL
 
 #else
 void set_cursor_pos(int column, int line) {  // only works in ANSI compatible terminal.
-    printf("\033[%d;%dH", column + 1, line + 1);
+	printf("\033[%d;%dH", column + 1, line + 1);
 }
 #endif
 
