@@ -1,5 +1,6 @@
 ﻿
 // Headers ////////////////////////////////////////////////////
+#include <limits.h>
 #include <iostream>
 #include <algorithm>
 #include <chrono>
@@ -10,8 +11,8 @@
 #include <vector>
 #include <stack>
 #include <map>
-#include <unordered_map>
 #include <set>
+#include <unordered_map>
 #include <unordered_set>
 #include <queue>
 #include <deque>
@@ -25,59 +26,44 @@
 	#define REDIRECT()
 #endif
 
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-
-#if !defined(INT_MIN) && !defined (INT_MAX)
-	#define INT_MIN     (-2147483647 - 1)
-	#define INT_MAX       2147483647
-#endif
-
 typedef std::vector<int> ivec;
 typedef std::vector<ivec> ivec2d;
 typedef std::string string;
 typedef std::vector<string> svec;
 typedef long long ll;
 
-// printf/scanf are much faster than stdin/stdout but can't use them for testing with redirect.
-#ifdef _TESTING
-	#define INPUT_INT(m_name) int m_name; std::cin >> m_name
-	#define PRINT_INT(m_name) PRINT(m_name)
-	#define PRINTLN_STR(m_name) PRINT(m_name)
-	#define LN std::cout << endl
-#else
-	#define INPUT_INT(m_name) int m_name; scanf("%i", &m_name)
-	#define PRINT_INT(m_name) printf("%i", m_name)
-	#define PRINTLN_STR(m_name) printf("%s\n", m_name)
-	#define LN printf("\n")
-#endif
+#define input(m_type, m_name) m_type m_name; std::cin >> m_name
+#define print(m_what)  std::cout << (m_what)
+#define println(m_what) std::cout << (m_what) << std::endl
+#define array_erase(m_arr, m_elem) (m_arr).erase(std::find((m_arr).begin(), (m_arr).end(), (m_elem)))
 
-#define INPUT_LINE(m_name) std::string m_name; std::getline(std::cin, m_name)
-#define INPUT_IARR(m_arr, m_size) std::vector<int> m_arr; for (int _i = 0; _i < m_size; _i++) { INPUT(int, inp); m_arr.push_back(inp); }
 #define EOL() do { std::string _line; std::getline(std::cin, _line); } while (false)
-#define ARR_ERASE(m_arr, m_elem) m_arr.erase(std::find(m_arr.begin(), m_arr.end(), m_elem));
-#define ARR_SORT(m_arr) std::sort(m_arr.begin(), m_arr.end())
-#define PRINT(m_what)  std::cout << (m_what)
-#define PRINTLN(m_what) std::cout << (m_what) << std::endl
-#define FOR(m_i, m_n) for (int m_i = 0; m_i < m_n; m_i++)
-#define FORL(m_i, m_begin, m_end) for (int m_i = m_begin; m_i < m_end; m_i++)
+#define FOR(i, N) for (int i = 0; i < N; i++)
+#define FORL(i, m_begin, m_end) for (int i = m_begin; i < m_end; i++)
 
-#define KICK_START() INPUT(int, T); for (int t = 1; t <= T; t++) { std::cout << "Case #" << t << ": " << KickStart() << std::endl; }
-int KickStart() { return {}; }
+#define MOD (1e9 + 7)
+#define MOD_ADD(a, b, mod) ((((a) % (mod)) + ((b) % (mod))) % (mod))
+#define MOD_MUL(a, b, mod) ((((a) % (mod)) * ((b) % (mod))) % (mod))
+
+#define KICK_START() input(int, T); for (int t = 1; t <= T; t++) { std::cout << "Case #" << t << ": "; KickStart(); }
+//void KickStart() { print(ans); }
 
 // Main ///////////////////////////////////////////////////////
 int MAIN() {
+	std::ios::sync_with_stdio(false); std::cin.tie(nullptr);
 	REDIRECT();
 	//KICK_START();
 
+
 	return 0;
 }
+
 
 // Tests ////////////////////////////////////////////////////////
 #ifdef _TESTING
 int TEST() {
 
-	// CHECK_EQ(, );
+	// CHECK_EQ(Solution(), );
 	// TEST_MAIN(R"()", R"()");
 	return 0;
 }
