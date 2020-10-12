@@ -44,6 +44,7 @@ class Ivec2dDraw {
 public:
 	const char* name; int int_wide = 3;
 	ivec2d* pvec; ivec2d copy;
+	bool no_zero = false;
 	Ivec2dDraw(const char* name, ivec2d* pvec) : name(name), pvec(pvec), copy(*pvec) {}
 	void draw(int ind_x = -1, int ind_y = -1);
 };

@@ -21,6 +21,10 @@ template<typename... T> void read(T&... args) { ((std::cin >> args), ...); }
 #define println(m_what) std::cout << (m_what) << std::endl
 #define FOR(i, N) for (int i = 0; i < N; i++)
 
+#define MOD (1e9 + 7)
+#define MOD_ADD(a, b, mod) ((((a) % (mod)) + ((b) % (mod))) % (mod))
+#define MOD_MUL(a, b, mod) ((((a) % (mod)) * ((b) % (mod))) % (mod))
+
 #define KICK_START() input(T); for (int t = 1; t <= T; t++) { std::cout << "Case #" << t << ": "; KickStart(); }
 //void KickStart() {}
 using namespace std;

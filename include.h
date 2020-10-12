@@ -1,25 +1,8 @@
 #pragma once
 
 // HEADERS /////////////////////////////////////////////////////
-#include <assert.h>
-#include <limits.h>
-#include <iostream>
-#include <functional>
-#include <sstream>
-#include <string>
-#include <vector>
-#include <chrono>
 
-#include <string>
-#include <vector>
-#include <stack>
-#include <map>
-#include <set>
-#include <unordered_map>
-#include <unordered_set>
-#include <queue>
-#include <deque>
-
+#include "bits/stdc++.h"
 #include "dbprint.h"
 
 // MACROS //////////////////////////////////////////////////

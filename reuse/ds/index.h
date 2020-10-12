@@ -1,6 +1,12 @@
 #pragma once
 #include "include.h"
 
+// map num to [0...limit) // commented : stack overflow implementation, other one is mine.
+// inline ll cycle_range(ll num, ll limit) { return (((num % limit) + limit) % limit); }
+inline ll cycle_range(ll num, ll limit) {
+	return (num >= 0) ? num % limit : (limit - ((num * -1) % limit)) % limit;
+}
+
 struct SwitchIndex {
 	int _ind = 0;
 	inline int ind() const { return _ind; }
@@ -9,7 +15,7 @@ struct SwitchIndex {
 };
 
 struct CycleIndex {
-	int _size, _ind = 0;
+	size_t _size; ll _ind = 0;
 	CycleIndex(int size) : _size(size) {}
 	inline int ind() const { return _ind; }
 	inline int incr() { int ret = _ind; _ind = (_ind + 1) % _size; return ret; }

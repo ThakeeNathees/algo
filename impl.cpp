@@ -105,6 +105,7 @@ void Ivec2dDraw::draw(int x, int y) {
 			if (copy[i].size() == j) {
 				char buff[10] = { 0 };
 				sprintf(buff, "%*i", _int_wide, (*pvec)[i][j]);
+				if (no_zero && (*pvec)[i][j] == 0) { for (int i = 0; i < 10; i++) if (buff[i] == '0') { buff[i] = ' '; break; } }
 				cprint(buff, Color::D_GREEN);
 				copy[i].push_back((*pvec)[i][j]);
 			} else {
@@ -112,10 +113,15 @@ void Ivec2dDraw::draw(int x, int y) {
 					copy[i][j] = (*pvec)[i][j];
 					char buff[10] = { 0 };
 					sprintf(buff, "%*i", _int_wide, (*pvec)[i][j]);
+					if (no_zero && (*pvec)[i][j] == 0) { for (int i = 0; i < 10; i++) if (buff[i] == '0') { buff[i] = ' '; break; } }
 					cprint(buff, Color::D_GREEN);
 					copy[i].push_back((*pvec)[i][j]);
 				} else {
-					printf("%*i", _int_wide, (*pvec)[i][j]);
+					if (no_zero && (*pvec)[i][j] == 0) {
+						printf("%*c", _int_wide, ' ');
+					} else {
+						printf("%*i", _int_wide, (*pvec)[i][j]);
+					}
 				}
 			}
 
