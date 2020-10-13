@@ -1,10 +1,10 @@
 #pragma once
 #include "include.h"
 
-struct SegmentTree {
+struct SegmentTree_Sum {
 	ivec tree;
 
-	SegmentTree(const ivec& arr) {
+	SegmentTree_Sum(const ivec& arr) {
 		const int N = arr.size();
 		tree = ivec(2 * N);
 		for (int i = 0; i < N; i++) {

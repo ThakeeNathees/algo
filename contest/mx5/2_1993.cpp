@@ -21,12 +21,12 @@ typedef long long ll;
 
 // Main ///////////////////////////////////////////////////////
 
-struct Node {
+struct AVLNode {
 	int h = -1;
 	ivec next;
 };
 
-void dfs(std::vector<Node>& tree, int current, int h, ivec& leaf) {
+void dfs(std::vector<AVLNode>& tree, int current, int h, ivec& leaf) {
 	if (tree[current].h != -1) return;
 	tree[current].h = h;
 	for (int n : tree[current].next) {
@@ -45,7 +45,7 @@ int MAIN() {
 	input(int, T);
 	while (T--) {
 		input(int, N); input(int, root_id); root_id--;
-		std::vector<Node> tree(N);
+		std::vector<AVLNode> tree(N);
 		FOR(n, N-1) {
 			input(int, j); input(int, k);
 			tree[j-1].next.push_back(k-1);

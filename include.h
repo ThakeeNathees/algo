@@ -28,8 +28,8 @@ do {                                                                 \
 	printf("TEST (line:" TOSTRING(__LINE__) "): ");                  \
 	if (m_result != m_expected) {                                    \
 		cprint("FAILURE\n", Color::L_RED);                           \
-		printf("\tEXPECTED : %s\n", to_string(m_expected).c_str());  \
-		printf("\tRESULT   : %s\n", to_string(m_result).c_str());    \
+		printf("\tEXPECTED : %s\n", _to_string(m_expected).c_str()); \
+		printf("\tRESULT   : %s\n", _to_string(m_result).c_str());   \
 	} else {                                                         \
 		cprint("SUCCESS\n", Color::L_GREEN);                         \
 	}                                                                \
@@ -45,7 +45,7 @@ int g_timer_line;
 #define TIMER_START() g_timer_line = __LINE__; g_t0 = std::chrono::steady_clock::now()
 #define TIMER_END()                                 \
 	printf("TIMER (line:%i): ", g_timer_line);      \
-	g_duration = std::chrono::steady_clock::now() - g_t0; cprint(to_string(g_duration.count() * 1000).append(" ms\n").c_str(), Color::L_SKYBLUE)
+	g_duration = std::chrono::steady_clock::now() - g_t0; cprint(_to_string(g_duration.count() * 1000).append(" ms\n").c_str(), Color::L_SKYBLUE)
 #endif
 
 #ifdef CPP_IMPL
@@ -101,7 +101,7 @@ Redirect redirect
 std::string strip(const std::string& str);
 
 template <typename T>
-std::string to_string(T value) {
+std::string _to_string(T value) {
 	if constexpr (std::is_arithmetic<T>::value) {
 		return std::to_string(value);
 	} else if constexpr (std::is_same<T, std::string>::value || std::is_same<T, const std::string&>::value) {

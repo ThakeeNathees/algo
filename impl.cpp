@@ -141,4 +141,69 @@ void IntDraw::draw() {
 	} printf("\n");
 }
 
+void StringDraw::draw(int l, int r) {
+
+	if (l != -1 && r == -1) r = l + 1;
+
+	printf("%s = ", name);
+	for (int i = 0; i <= (int)str->size(); i++) {
+		char c = (*str)[i];
+
+		if (i == l) cprint("[", Color::D_PINK);
+		if (i >= copy.size()) {
+			cprint(string(1, c).c_str(), Color::D_GREEN);
+			copy += c;
+		} else {
+			if (copy[i] != c) {
+				cprint(string(1, c).c_str(), Color::D_GREEN);
+				copy[i] = c;
+			} else {
+				printf("%c", c);
+			}
+		}
+		if (i + 1 == r) cprint("]", Color::D_PINK);
+	} printf("\n");
+}
+
+void ArrTreeDraw::_recursive_draw(int ind, string indent, int db_ind) {
+	bool is_right = ind & 1, is_root = ind == 1; // root index is 1 not 0.
+	printf("%s", indent.c_str());
+
+	if (!is_root) {
+		if (is_right) {
+			printf(" |__");
+			indent += "    ";
+		} else {
+			printf(" |--");
+			indent += " |  ";
+		}
+	}
+
+	if (ind < tree->size()) {
+		printf(" "); // negative numbers have a minus.
+		if (ind == db_ind) cprint("[", Color::D_PINK);
+		if (copy.size() <= ind) {
+			copy.resize(tree->size());
+			copy[ind] = (*tree)[ind];
+			cprint(std::to_string((*tree)[ind]).c_str(), Color::D_GREEN);
+		} else if (copy[ind] != (*tree)[ind]) {
+			copy[ind] = (*tree)[ind];
+			cprint(std::to_string((*tree)[ind]).c_str(), Color::D_GREEN);
+		} else printf("%i", (*tree)[ind]);
+		if (ind == db_ind) cprint("]", Color::D_PINK);
+		printf("\n");
+
+	}
+	else cprint("null\n", Color::L_RED);
+
+
+	if (ind < tree->size() && (((ind * 2) < tree->size()) || ((ind * 2 + 1) < tree->size()))) {
+		_recursive_draw(2 * ind, indent, db_ind);
+		_recursive_draw(2 * ind + 1, indent, db_ind);
+	}
+
+	if (is_right && (ind > tree->size() || ((ind * 2 > tree->size()) && (ind * 2 + 1 > tree->size()))))
+		printf("%s\n", indent.c_str());
+}
+
 ///////////////////////////////////////////////////////////////

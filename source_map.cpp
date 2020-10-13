@@ -1,8 +1,8 @@
 ﻿
 // SELECT THE SOURCE FILE HERE
 
-#include "main.cpp"
-//#include "leetcode.cpp"
+//#include "main.cpp"
+#include "leetcode.cpp"
 
 // contest/mx5: ------------------------------------------------
 #if 0 // https://www.hackerrank.com/moraxtreme-5-0

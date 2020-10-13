@@ -11,17 +11,17 @@
 #endif
 
 using namespace std; // Only for CP.
+template <typename T> using vec = vector<T>;
 typedef long long ll;
-template<typename T> using v = vector<T>;
-typedef v<int> vi; typedef v<vi> vi2;
-typedef v<ll> vll; typedef v<vll> vll2;
+typedef vec<int> ivec; typedef vec<ll> llvec;
+typedef vec<ivec> ivec2d;
 
 #define input(...) int __VA_ARGS__; read(__VA_ARGS__)
 #define print(m_what)  std::cout << (m_what)
 #define println(m_what) std::cout << (m_what) << std::endl
 #define FOR(i, N) for (int i = 0; i < N; i++)
 template<typename... T> void read(T&... args) { ((std::cin >> args), ...); }
-void read(vi& arr) { FOR(i, arr.size()) { std::cin >> arr[i]; } }
+void read(ivec& arr) { FOR(i, arr.size()) { std::cin >> arr[i]; } }
 
 #define KICK_START() input(T); for (int t = 1; t <= T; t++) { std::cout << "Case #" << t << ": "; KickStart(); }
 //void KickStart() {}
@@ -35,11 +35,13 @@ int MAIN() {
 	return 0;
 }
 
+
+
 // Tests ////////////////////////////////////////////////////////
 
 #ifdef _TESTING
 int TEST() {
-
+	
 	// TEST_MAIN(R"()", R"()");
 	return 0;
 }
