@@ -19,9 +19,10 @@ typedef vec<ivec> ivec2d;
 #define input(...) int __VA_ARGS__; read(__VA_ARGS__)
 #define print(m_what)  std::cout << (m_what)
 #define println(m_what) std::cout << (m_what) << std::endl
-#define FOR(i, N) for (int i = 0; i < N; i++)
+#define dbreak() __debugbreak()
+#define FOR(i, N) for (size_t i = 0; i < N; i++)
 template<typename... T> void read(T&... args) { ((std::cin >> args), ...); }
-void read(ivec& arr) { FOR(i, arr.size()) { std::cin >> arr[i]; } }
+template<typename T> void read(vec<T>& arr) { FOR(i, arr.size()) { std::cin >> arr[i]; } }
 
 #define KICK_START() input(T); for (int t = 1; t <= T; t++) { std::cout << "Case #" << t << ": "; KickStart(); }
 //void KickStart() {}
@@ -41,7 +42,7 @@ int MAIN() {
 
 #ifdef _TESTING
 int TEST() {
-	
+
 	// TEST_MAIN(R"()", R"()");
 	return 0;
 }
