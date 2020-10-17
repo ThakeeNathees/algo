@@ -60,36 +60,59 @@ void clear_console() {
 #endif
 
 // dbprint classes ////////////////////////////////////////////
-void IvecDraw::draw(int l, int r) {
+bool Globals::draw_pause = true;
+Color Globals::index_color = Color::D_PINK;
+Color Globals::changed_color = Color::D_SKYBLUE;
+
+
+Drawable::_DrawState::_DrawState(const char* str) {
+	strliteral = str;
+	drawable = new StringDraw("strliteral", &strliteral); // memory leak is acceptable for debugging.
+}
+
+void IvecDraw::draw(int l, int r, int ind) {
 
 	printf("%s = [", name);
 	for (int i = 0; i < parr->size(); i++) {
 		if (i && i != r) printf(",");
 
 		if (i == l) {
-			if (r == -1) cprint("#", Color::D_PINK);
-			else cprint("[", Color::D_PINK);
+			if (r == -1) cprint("#", Globals::index_color);
+			else cprint("[", Globals::index_color);
 		}
+		if (i == ind) cprint("#", Globals::index_color);
+
 		else if (i) printf(" "); // space after the above comma.
 		
+		Color element_color = Color::L_WHITE;
 		if (copy.size() > i) {
 			if (copy[i] != (*parr)[i]) {
 				copy[i] = (*parr)[i];
-				cprint(std::to_string((*parr)[i]).c_str(), Color::D_GREEN);
-			} else {
-				printf("%i", (*parr)[i]);
+				element_color = Globals::changed_color;
 			}
 		} else {
 			copy.push_back((*parr)[i]);
-			cprint(std::to_string((*parr)[i]).c_str(), Color::D_GREEN);
+			element_color = Globals::changed_color;
 		}
+		auto it = color_override.find(i);
+		if (it != color_override.end()) element_color = it->second;
+		cprint(std::to_string((*parr)[i]).c_str(), element_color);
 
-		if (i + 1 == r) cprint("]", Color::D_PINK);
+		if (i + 1 == r) cprint("]", Globals::index_color);
 	}
 	printf(" ]\n");
 }
 
-void Ivec2dDraw::draw(int x, int y) {
+void Ivec2dDraw::draw(int x, int y, int z) {
+
+	int x1, y1, x2, y2;
+	if (range) {
+		x1 = x / (*pvec)[0].size(); y1 = x % (*pvec)[0].size();
+		x2 = (y - 1) / (*pvec)[0].size(); y2 = (y - 1) % (*pvec)[0].size();
+	} else {
+		x1 = x2 = x;
+		y1 = y2 = y;
+	}
 
 	printf("%s =\n", name);
 	for (int i = 0; i < (*pvec).size(); i++) {
@@ -97,16 +120,19 @@ void Ivec2dDraw::draw(int x, int y) {
 		if (copy.size() == i) { copy.push_back(ivec()); }
 		for (int j = 0; j < (*pvec)[i].size(); j++) {
 
-			if (j && (i != x || j-1 != y)) printf(",");
-			if (i == x && j == y) cprint((j == 0) ? "[" : " [", Color::D_PINK);
+			if (j && ((i != x1 || j-1 != y1) && (i != x2 || j - 1 != y2))) printf(","); // ?
+
+			if ((z/(*pvec)[0].size() == i) && (z % (*pvec)[0].size() == j))
+				cprint((j == 0) ? "#" : " #", Globals::index_color);
+			else if (i == x1 && j == y1) cprint((j == 0) ? "[" : " [", Globals::index_color);
 			else if (j) printf(" ");
 
-			int _int_wide = (i == x && j == y) ? (int_wide-1) : int_wide;
+			int _int_wide = (i == x1 && j == y1) ? (int_wide - 1) : int_wide;
 			if (copy[i].size() == j) {
 				char buff[10] = { 0 };
 				sprintf(buff, "%*i", _int_wide, (*pvec)[i][j]);
 				if (no_zero && (*pvec)[i][j] == 0) { for (int i = 0; i < 10; i++) if (buff[i] == '0') { buff[i] = ' '; break; } }
-				cprint(buff, Color::D_GREEN);
+				cprint(buff, Globals::changed_color);
 				copy[i].push_back((*pvec)[i][j]);
 			} else {
 				if (copy[i][j] != (*pvec)[i][j]) {
@@ -114,7 +140,7 @@ void Ivec2dDraw::draw(int x, int y) {
 					char buff[10] = { 0 };
 					sprintf(buff, "%*i", _int_wide, (*pvec)[i][j]);
 					if (no_zero && (*pvec)[i][j] == 0) { for (int i = 0; i < 10; i++) if (buff[i] == '0') { buff[i] = ' '; break; } }
-					cprint(buff, Color::D_GREEN);
+					cprint(buff, Globals::changed_color);
 					copy[i].push_back((*pvec)[i][j]);
 				} else {
 					if (no_zero && (*pvec)[i][j] == 0) {
@@ -125,7 +151,7 @@ void Ivec2dDraw::draw(int x, int y) {
 				}
 			}
 
-			if (i == x && j == y) cprint("]", Color::D_PINK);
+			if (i == x2 && j == y2) cprint("]", Globals::index_color);
 			
 		} printf("\n");
 	}
@@ -134,7 +160,7 @@ void Ivec2dDraw::draw(int x, int y) {
 void IntDraw::draw() {
 	printf("%s = ", name);
 	if (copy != *i){
-		cprint(std::to_string(*i).c_str(), Color::D_GREEN);
+		cprint(std::to_string(*i).c_str(), Globals::changed_color);
 		copy = *i;
 	} else {
 		printf("%i", copy);
@@ -149,19 +175,19 @@ void StringDraw::draw(int l, int r) {
 	for (int i = 0; i <= (int)str->size(); i++) {
 		char c = (*str)[i];
 
-		if (i == l) cprint("[", Color::D_PINK);
+		if (i == l) cprint("[", Globals::index_color);
 		if (i >= copy.size()) {
-			cprint(string(1, c).c_str(), Color::D_GREEN);
+			cprint(string(1, c).c_str(), Globals::changed_color);
 			copy += c;
 		} else {
 			if (copy[i] != c) {
-				cprint(string(1, c).c_str(), Color::D_GREEN);
+				cprint(string(1, c).c_str(), Globals::changed_color);
 				copy[i] = c;
 			} else {
 				printf("%c", c);
 			}
 		}
-		if (i + 1 == r) cprint("]", Color::D_PINK);
+		if (i + 1 == r) cprint("]", Globals::index_color);
 	} printf("\n");
 }
 
@@ -181,16 +207,16 @@ void ArrTreeDraw::_recursive_draw(int ind, string indent, int db_ind) {
 
 	if (ind < tree->size()) {
 		printf(" "); // negative numbers have a minus.
-		if (ind == db_ind) cprint("[", Color::D_PINK);
+		if (ind == db_ind) cprint("[", Globals::index_color);
 		if (copy.size() <= ind) {
 			copy.resize(tree->size());
 			copy[ind] = (*tree)[ind];
-			cprint(std::to_string((*tree)[ind]).c_str(), Color::D_GREEN);
+			cprint(std::to_string((*tree)[ind]).c_str(), Globals::changed_color);
 		} else if (copy[ind] != (*tree)[ind]) {
 			copy[ind] = (*tree)[ind];
-			cprint(std::to_string((*tree)[ind]).c_str(), Color::D_GREEN);
+			cprint(std::to_string((*tree)[ind]).c_str(), Globals::changed_color);
 		} else printf("%i", (*tree)[ind]);
-		if (ind == db_ind) cprint("]", Color::D_PINK);
+		if (ind == db_ind) cprint("]", Globals::index_color);
 		printf("\n");
 
 	}

@@ -3,7 +3,6 @@
 #ifdef _TESTING
 	#define CPP_IMPL
 	#include "include.h"
-	#define DBPRINT
 #else
 	#include <bits/stdc++.h>
 	#define MAIN main

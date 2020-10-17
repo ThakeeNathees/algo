@@ -68,16 +68,28 @@ void clear_console();
 void set_cursor_pos(int column, int line);
 void cprint(const char* p_msg, Color p_fg, Color p_bg = Color::BLACK);
 
+class Globals {
+public:
+	static bool draw_pause; // will pause after each draw.
+	static Color index_color; // 1 2 [3] #4 5  color to indicate index
+	static Color changed_color;
+};
+
 class Drawable {
 public:
-	struct DrawState {
+	struct _DrawState {
 		Drawable* drawable;
+
+
 		int x = -1, y = -1, z = -1;
-		DrawState(Drawable* drawable, int x = -1, int y = -1, int z = -1) : drawable(drawable), x(x), y(y), z(z) {}
-		DrawState(Drawable& drawable) : drawable(&drawable) {}
+		_DrawState(Drawable* drawable, int x = -1, int y = -1, int z = -1) : drawable(drawable), x(x), y(y), z(z) {}
+		_DrawState(Drawable& drawable) : drawable(&drawable) {}
+
+		string strliteral;
+		_DrawState(const char* str);
 	};
 
-	virtual DrawState operator()(int x = -1, int y = -1, int z = -1) { return {this, x, y, z}; }
+	virtual _DrawState operator()(int x = -1, int y = -1, int z = -1) { return {this, x, y, z}; }
 	virtual void _draw(int x = -1, int y = -1, int z = -1) = 0;
 };
 
@@ -85,20 +97,21 @@ class IvecDraw : public Drawable {
 public:
 	const char* name;
 	ivec* parr; ivec copy;
+	std::map<int, Color> color_override; // TODO: refactor everything.
 
 	IvecDraw(const char* name, ivec* parr) : name(name), parr(parr), copy(*parr) {}
-	void draw(int l = -1, int r = -1);
-	void _draw(int x = -1, int y = -1, int z = -1) override { draw(x, y); }
+	void draw(int l = -1, int r = -1, int i = -1);
+	void _draw(int x = -1, int y = -1, int z = -1) override { draw(x, y, z); }
 };
 
 class Ivec2dDraw : public Drawable {
 public:
 	const char* name; int int_wide = 3;
 	ivec2d* pvec; ivec2d copy;
-	bool no_zero = false;
+	bool no_zero = false, range = false;
 	Ivec2dDraw(const char* name, ivec2d* pvec) : name(name), pvec(pvec), copy(*pvec) {}
-	void draw(int ind_x = -1, int ind_y = -1);
-	void _draw(int x = -1, int y = -1, int z = -1) override { draw(x, y); }
+	void draw(int x = -1, int y = -1, int z = -1);
+	void _draw(int x = -1, int y = -1, int z = -1) override { draw(x, y, z); }
 };
 
 class IntDraw : public Drawable {
@@ -110,6 +123,7 @@ public:
 	void _draw(int x = -1, int y = -1, int z = -1) override { draw(); }
 };
 
+// TODO fix colors;
 class StringDraw : public Drawable {
 public:
 	const char* name;
@@ -135,16 +149,16 @@ template<typename... Args>
 void draw(Args... args) {
 	clear_console();
 	draw_internal(args...);
-	getchar();
+	if (Globals::draw_pause) getchar();
 }
 
 template<typename... Args>
-void draw_internal(Drawable::DrawState drawstate, Args... args) {
+void draw_internal(Drawable::_DrawState drawstate, Args... args) {
 	drawstate.drawable->_draw(drawstate.x, drawstate.y, drawstate.z);
 	draw_internal(args...);
 }
 
 template<typename... Args>
-void draw_internal(Drawable::DrawState drawstate) {
+void draw_internal(Drawable::_DrawState drawstate) {
 	drawstate.drawable->_draw(drawstate.x, drawstate.y, drawstate.z);
 }
