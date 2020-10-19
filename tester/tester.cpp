@@ -26,7 +26,7 @@ std::string strip(const std::string& str) {
 	size_t begin = 0, end = str.size();
 	while (true) {
 		if (begin >= str.size()) return "";
-		if (str[begin] != ' ' && str[begin] != '\n')break;
+		if (str[begin] != ' ' && str[begin] != '\n') break;
 		begin++;
 	}
 

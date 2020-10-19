@@ -30,6 +30,19 @@
 
 #include <bits/stdc++.h>
 
+#ifdef INCLUDE_TYPEDEF
+	#define input(...) int __VA_ARGS__; read(__VA_ARGS__)
+	#define print(m_what)  std::cout << (m_what)
+	#define println(m_what) std::cout << (m_what) << std::endl
+	#define FOR(i, N) for (size_t i = 0; i < N; i++)
+	
+	using namespace std;
+	template <typename T> using vec = vector<T>;
+	typedef long long ll;
+	typedef vec<int> ivec; typedef vec<ll> llvec;
+	typedef vec<ivec> ivec2d;
+#endif
+
 #define _TESTING
 #define MAIN _main
 #define TEST main
