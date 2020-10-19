@@ -205,25 +205,47 @@ void _dbprint_internal(Printable::Pointer pp) {
 }
 
 //template<typename T>
-class VecPrinter : public Printable {
+class iVecPrinter : public Printable {
 	std::vector<int>* src;
 	std::vector<int> copy;
-	int ind, l, r;
+	int ind = -1, l = -1, r = -1;
 	std::map<int, Color> elem_color_override;
 
 	int elem_width = 2;
 public:
-	VecPrinter(std::vector<int>* src) : src(src), copy(*src) {}
+	iVecPrinter(std::vector<int>* src) : src(src), copy(*src) {}
 
-	VecPrinter& operator()(int p_ind) { ind = p_ind; return *this; }
-	VecPrinter& operator()(int p_l, int p_r, int p_ind = -1) { l = p_l; r = p_r; ind = p_ind; return *this; }
+	iVecPrinter& operator()(int p_ind) { ind = p_ind; return *this; }
+	iVecPrinter& operator()(int p_l, int p_r, int p_ind = -1) { l = p_l; r = p_r; ind = p_ind; return *this; }
 	virtual void flush() override { l = -1, r = -1, ind = -1; }
 
-	VecPrinter& add_color(int ind, Color color) { elem_color_override[ind] = color; return *this; }
-	VecPrinter& remove_color(int ind) { elem_color_override.erase(ind); return *this; }
+	iVecPrinter& add_color(int ind, Color color) { elem_color_override[ind] = color; return *this; }
+	iVecPrinter& remove_color(int ind) { elem_color_override.erase(ind); return *this; }
 
 	void dbprint() override;
 
+};
+
+class iVec2dPrinter : public Printable {
+	std::vector<std::vector<int>>* src;
+	std::vector<std::vector<int>> copy;
+	int openh = -1, openw = -1;   // [
+	int closeh = -1, closew = -1; // ]
+	int indh = -1, indw = -1; // single index h, w
+	std::map<std::pair<int, int>, Color> elem_color_override;
+
+	int elem_width = 2;
+public:
+	iVec2dPrinter(std::vector<std::vector<int>>* src) : src(src), copy(*src) {}
+
+	iVec2dPrinter& operator()(int p_indh, int p_indw) { indh = p_indh; indw = p_indw; return *this; }
+	iVec2dPrinter& operator()(int oh, int ow, int ch, int cw) { openh = oh, openw = ow, closeh = ch, closew = cw; return *this; }
+	virtual void flush() override { openh = -1, openw = -1, closeh = -1, closew = -1, indh = -1, indw = -1; }
+
+	iVec2dPrinter& add_color(int indh, int indw, Color color) { elem_color_override[{ indh, indw }] = color; return *this; }
+	iVec2dPrinter& remove_color(int indh, int indw) { elem_color_override.erase({ indh, indw }); return *this; }
+
+	void dbprint() override;
 };
 
 #endif // TESTER_H
@@ -260,7 +282,7 @@ std::string strip(const std::string& str) {
 	size_t begin = 0, end = str.size();
 	while (true) {
 		if (begin >= str.size()) return "";
-		if (str[begin] != ' ' && str[begin] != '\n')break;
+		if (str[begin] != ' ' && str[begin] != '\n') break;
 		begin++;
 	}
 
@@ -306,7 +328,7 @@ void clear_console() {
 // DBPRINT IMPLEMENTATIONS ////////////////////////////////////////////////////////////////////////////////
 
 
-void VecPrinter::dbprint() {
+void iVecPrinter::dbprint() {
 	printf("[");
 	for (int i = 0; i < (int)src->size(); i++) {
 		if (i) printf((i != r) ? ", " : " ");
@@ -315,7 +337,6 @@ void VecPrinter::dbprint() {
 
 		if (i == l) cprint("[", TesterGlobals::index_color), width_reduction++;
 		if (i == ind) cprint("#", TesterGlobals::index_color), width_reduction++;
-		if (i == r) width_reduction++;
 
 		Color elem_color = Color::L_WHITE;
 		int elem = (*src)[i];
@@ -329,13 +350,53 @@ void VecPrinter::dbprint() {
 		if (it != elem_color_override.end()) elem_color = it->second;
 
 		std::string elem_str = std::to_string(elem);
-		while (elem_str.size() < elem_width) elem_str = " " + elem_str;
+		while (elem_str.size() < elem_width - width_reduction) elem_str = " " + elem_str;
 		cprint(elem_str.c_str(), elem_color);
 
 		if (i + 1 == r) cprint("]", TesterGlobals::index_color);
 	}
 	printf(" ]\n");
 }
+
+void iVec2dPrinter::dbprint() {
+	printf("[");
+	for (int h = 0; h < (int)src->size(); h++) {
+		printf(h ? " [" : "["); // align with the very first '['
+
+		for (int w = 0; w < (int)(*src)[0].size(); w++) {
+			if (w) printf((w != closew || h != closeh) ? ", " : " ");
+
+			int width_reduction = 0;
+
+			if (h == openh && w == openw) cprint("[", TesterGlobals::index_color), width_reduction++;
+			if (h == indh && w == indw) cprint("#", TesterGlobals::index_color), width_reduction++;
+
+			Color elem_color = Color::L_WHITE;
+			int elem = (*src)[h][w];
+			if (h < copy.size()) {
+				if (w < copy[h].size()) {
+					if (copy[h][w] != elem) copy[h][w] = elem, elem_color = TesterGlobals::changed_color;
+				} else {
+					copy[h].push_back(elem);
+					elem_color = TesterGlobals::changed_color;
+				}
+			} else {
+				copy.push_back({ elem });
+				elem_color = TesterGlobals::changed_color;
+			}
+			std::map<std::pair<int, int>, Color>::iterator it = elem_color_override.find({ h, w });
+			if (it != elem_color_override.end()) elem_color = it->second;
+
+			std::string elem_str = std::to_string(elem);
+			while (elem_str.size() < elem_width - width_reduction) elem_str = " " + elem_str;
+			cprint(elem_str.c_str(), elem_color);
+
+			if (h == closeh && w + 1 == closew) cprint("]", TesterGlobals::index_color);
+		} printf((h ^ src->size() - 1) ? " ]\n" : " ]");
+	} printf("]\n");
+}
+
+
 
 
 #endif // TESTER_IMPL

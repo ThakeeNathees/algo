@@ -72,7 +72,7 @@ void clear_console() {
 // DBPRINT IMPLEMENTATIONS ////////////////////////////////////////////////////////////////////////////////
 
 
-void VecPrinter::dbprint() {
+void iVecPrinter::dbprint() {
 	printf("[");
 	for (int i = 0; i < (int)src->size(); i++) {
 		if (i) printf((i != r) ? ", " : " ");
@@ -81,7 +81,6 @@ void VecPrinter::dbprint() {
 
 		if (i == l) cprint("[", TesterGlobals::index_color), width_reduction++;
 		if (i == ind) cprint("#", TesterGlobals::index_color), width_reduction++;
-		if (i == r) width_reduction++;
 
 		Color elem_color = Color::L_WHITE;
 		int elem = (*src)[i];
@@ -95,10 +94,50 @@ void VecPrinter::dbprint() {
 		if (it != elem_color_override.end()) elem_color = it->second;
 
 		std::string elem_str = std::to_string(elem);
-		while (elem_str.size() < elem_width) elem_str = " " + elem_str;
+		while (elem_str.size() < elem_width - width_reduction) elem_str = " " + elem_str;
 		cprint(elem_str.c_str(), elem_color);
 
 		if (i + 1 == r) cprint("]", TesterGlobals::index_color);
 	}
 	printf(" ]\n");
 }
+
+void iVec2dPrinter::dbprint() {
+	printf("[");
+	for (int h = 0; h < (int)src->size(); h++) {
+		printf(h ? " [" : "["); // align with the very first '['
+
+		for (int w = 0; w < (int)(*src)[0].size(); w++) {
+			if (w) printf((w != closew || h != closeh) ? ", " : " ");
+
+			int width_reduction = 0;
+
+			if (h == openh && w == openw) cprint("[", TesterGlobals::index_color), width_reduction++;
+			if (h == indh && w == indw) cprint("#", TesterGlobals::index_color), width_reduction++;
+
+			Color elem_color = Color::L_WHITE;
+			int elem = (*src)[h][w];
+			if (h < copy.size()) {
+				if (w < copy[h].size()) {
+					if (copy[h][w] != elem) copy[h][w] = elem, elem_color = TesterGlobals::changed_color;
+				} else {
+					copy[h].push_back(elem);
+					elem_color = TesterGlobals::changed_color;
+				}
+			} else {
+				copy.push_back({ elem });
+				elem_color = TesterGlobals::changed_color;
+			}
+			std::map<std::pair<int, int>, Color>::iterator it = elem_color_override.find({ h, w });
+			if (it != elem_color_override.end()) elem_color = it->second;
+
+			std::string elem_str = std::to_string(elem);
+			while (elem_str.size() < elem_width - width_reduction) elem_str = " " + elem_str;
+			cprint(elem_str.c_str(), elem_color);
+
+			if (h == closeh && w + 1 == closew) cprint("]", TesterGlobals::index_color);
+		} printf((h ^ src->size() - 1) ? " ]\n" : " ]");
+	} printf("]\n");
+}
+
+
