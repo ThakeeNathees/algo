@@ -10,6 +10,7 @@
 #define print(m_what)  std::cout << (m_what)
 #define println(m_what) std::cout << (m_what) << std::endl
 #define FOR(i, N) for (size_t i = 0; i < N; i++)
+#define dbreak(cond) if ((cond)) __debugbreak()
 
 using namespace std;
 template <typename T> using vec = vector<T>;
@@ -18,7 +19,6 @@ typedef vec<int> ivec; typedef vec<ll> llvec;
 typedef vec<ivec> ivec2d;
 
 // Solution ///////////////////////////////////////////////////
-
 
 // Main ///////////////////////////////////////////////////////
 
@@ -35,6 +35,7 @@ int MAIN() {
 }
 
 // Tests ////////////////////////////////////////////////////////
+
 
 #ifdef _TESTING
 int TEST() {

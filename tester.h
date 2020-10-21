@@ -151,23 +151,39 @@ void clear_console();
 void set_cursor_pos(int column, int line);
 void cprint(const char* p_msg, Color p_fg, Color p_bg = Color::BLACK);
 
+template<class T> struct is_vector {
+	static bool const value = false;
+};
+template<class T> struct is_vector<std::vector<T> > {
+	static bool const value = true;
+};
+
 template <typename T>
 std::string _to_string(T value) {
-	if constexpr (std::is_arithmetic<T>::value) {
+	if constexpr (std::is_same<T, bool>::value) {
+		return value ? "t" : "f";
+	}  else if constexpr (std::is_arithmetic<T>::value) {
 		return std::to_string(value);
 	} else if constexpr (std::is_same<T, std::string>::value || std::is_same<T, const std::string&>::value) {
 		return value;
-	} else if constexpr (std::is_same<T, std::vector<int>>::value || std::is_same<T, std::vector<long>>::value ||
-		std::is_same<T, std::vector<float>>::value || std::is_same<T, std::vector<double>>::value ) {
+	} else if constexpr (std::is_same<T, std::vector<bool>>::value) {
 		std::string ret = "[ ";
 		for (size_t i = 0; i < value.size(); i++) {
 			if (i != 0) ret += ", ";
-			ret += std::to_string(value[i]);
+			ret += (value[i]) ? "t" : "f";
+		}
+		return ret + " ]";
+	} else if constexpr (is_vector<T>::value) {
+		std::string ret = "[ ";
+		for (size_t i = 0; i < value.size(); i++) {
+			if (i != 0) ret += ", ";
+			ret += _to_string(value[i]);
 		}
 		return ret + " ]";
 	} else if constexpr (std::is_same<T, const char*>::value) {
 		return value;
 	}
+	// don't return anything here as it may throw compiler error if any type were missed.
 }
 
 // DBPRINT ////////////////////////////////////////////////////////////////////////////////
