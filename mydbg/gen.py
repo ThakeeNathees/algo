@@ -25,9 +25,9 @@ LICENSE = '''\
 //------------------------------------------------------------------------------
 '''
 
-SOURCE = 'core.h'
-TARGET = 'tester.h'
-IMPL   = 'TESTER_IMPL'
+SOURCE = 'dbgprint.h'
+TARGET = 'mydbg.h'
+IMPL   = 'MYDBG_IMPL'
 USAGE = '''
 // TODO:
 '''

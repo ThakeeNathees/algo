@@ -1,8 +1,8 @@
 ﻿
 // SELECT THE SOURCE FILE HERE
 
-#define TESTER_IMPL
-#include "tester.h"
+#define MYDBG_IMPL
+#include "mydbg.h"
 
 #include "main.cpp"
 

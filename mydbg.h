@@ -25,10 +25,100 @@
 
 // TODO:
 
+#ifndef DBGPRINT_H
+#define DBGPRINT_H
+
 #ifndef TESTER_H
 #define TESTER_H
 
-#include <bits/stdc++.h>
+#include <assert.h>
+#include <chrono>
+#include <iostream>
+#include <functional>
+#include <fstream>
+#include <iostream>
+#include <istream>
+#include <limits.h>
+#include <sstream>
+#include <string>
+#include <vector>
+
+// Data structures.
+#include <algorithm>
+#include <deque>
+#include <map>
+#include <queue>
+#include <set>
+#include <stack>
+#include <string>
+#include <vector>
+
+#if __cplusplus >= 201103L
+#include <tuple>
+#include <unordered_map>
+#include <unordered_set>
+#endif
+
+
+#ifndef DBG_TYPES_H
+#define DBG_TYPES_H
+
+template<class T> struct is_vector {
+	static bool const value = false;
+};
+template<class T> struct is_vector<std::vector<T> > {
+	static bool const value = true;
+};
+
+template<class T> struct is_map {
+	static bool const value = false;
+};
+
+template<class T1, class T2> struct is_map<std::map<T1, T2> > {
+	static bool const value = true;
+};
+
+template <typename T>
+std::string _to_string(const T& value) {
+	if constexpr (std::is_same<T, bool>::value) {
+		return value ? "true" : "false";
+	} else if constexpr (std::is_arithmetic<T>::value) {
+		return std::to_string(value);
+	} else if constexpr (std::is_same<T, std::string>::value || std::is_same<T, const std::string&>::value) {
+		return value;
+
+	} else if constexpr (std::is_same<T, std::vector<bool>>::value) {
+		std::string ret = "[ ";
+		for (size_t i = 0; i < value.size(); i++) {
+			if (i != 0) ret += ", ";
+			ret += (value[i]) ? "true" : "false";
+		}
+		return ret + " ]";
+	} else if constexpr (is_vector<T>::value) {
+		std::string ret = "[ ";
+		for (size_t i = 0; i < value.size(); i++) {
+			if (i != 0) ret += ", ";
+			ret += _to_string(value[i]);
+		}
+		return ret + " ]";
+
+	} else if constexpr (is_map<T>::value) {
+		auto it = value.begin();
+		std::string ret = "[ ";
+		while (it != value.end()) {
+			if (it == value.begin()) ret += ", ";
+			ret += _to_string(it->first) + " : " + _to_string(it->second);
+			it++;
+		}
+		return ret + " ]";
+	} else if constexpr (std::is_same<T, const char*>::value) {
+		return value;
+	}
+	// don't return anything here as it may throw compiler error if any type were missed.
+}
+
+
+#endif // DBG_TYPES_H
 
 #ifdef INCLUDE_TYPEDEF
 	#define input(...) int __VA_ARGS__; read(__VA_ARGS__)
@@ -46,6 +136,12 @@
 #define _TESTING
 #define MAIN _main
 #define TEST main
+
+// copy this to the debugging source.
+#ifndef _TESTING
+#define MAIN main
+#define REDIRECT() std::ios::sync_with_stdio(false); std::cin.tie(nullptr)
+#endif
 
 #define STRING(x) #x
 #define STRINGIFY(x) STRING(x)
@@ -151,61 +247,9 @@ void clear_console();
 void set_cursor_pos(int column, int line);
 void cprint(const char* p_msg, Color p_fg, Color p_bg = Color::BLACK);
 
-template<class T> struct is_vector {
-	static bool const value = false;
-};
-template<class T> struct is_vector<std::vector<T> > {
-	static bool const value = true;
-};
 
-template<class T> struct is_map {
-	static bool const value = false;
-};
+#endif // TESTER_H
 
-template<class T1, class T2> struct is_map<std::map<T1, T2> > {
-	static bool const value = true;
-};
-
-template <typename T>
-std::string _to_string(const T& value) {
-	if constexpr (std::is_same<T, bool>::value) {
-		return value ? "true" : "false";
-	} else if constexpr (std::is_arithmetic<T>::value) {
-		return std::to_string(value);
-	} else if constexpr (std::is_same<T, std::string>::value || std::is_same<T, const std::string&>::value) {
-		return value;
-
-	} else if constexpr (std::is_same<T, std::vector<bool>>::value) {
-		std::string ret = "[ ";
-		for (size_t i = 0; i < value.size(); i++) {
-			if (i != 0) ret += ", ";
-			ret += (value[i]) ? "true" : "false";
-		}
-		return ret + " ]";
-	} else if constexpr (is_vector<T>::value) {
-		std::string ret = "[ ";
-		for (size_t i = 0; i < value.size(); i++) {
-			if (i != 0) ret += ", ";
-			ret += _to_string(value[i]);
-		}
-		return ret + " ]";
-
-	} else if constexpr (is_map<T>::value) {
-		auto it = value.begin();
-		std::string ret = "[ ";
-		while (it != value.end()) {
-			if (it == value.begin()) ret += ", ";
-			ret += _to_string(it->first) + " : " + _to_string(it->second);
-			it++;
-		}
-		return ret + " ]";
-	} else if constexpr (std::is_same<T, const char*>::value) {
-		return value;
-	}
-	// don't return anything here as it may throw compiler error if any type were missed.
-}
-
-// DBPRINT ////////////////////////////////////////////////////////////////////////////////
 
 class Printable {
 public:
@@ -285,12 +329,12 @@ public:
 	void dbprint() override;
 };
 
-#endif // TESTER_H
 
+#endif // DBGPRINT_H
 
 //--------------- IMPLEMENTATIONS -------------------
 
-#if defined(TESTER_IMPL)
+#if defined(MYDBG_IMPL)
 
 //include "core.h"
 
@@ -436,4 +480,4 @@ void iVec2dPrinter::dbprint() {
 
 
 
-#endif // TESTER_IMPL
+#endif // MYDBG_IMPL
