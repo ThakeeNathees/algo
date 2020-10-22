@@ -65,18 +65,18 @@ do {                                                                 \
 	};													                 \
 	std::ios::sync_with_stdio(false); std::cin.tie(nullptr); Redirect redirect
 
-#define TEST_MAIN(m_input_buff, m_output_buff)                           \
-	_EXPECTED_OUTPUT = strip(m_output_buff);                             \
-	TesterGlobals::_INPUT_BUFF = strip(m_input_buff);                    \
-	TesterGlobals::_OUTPUT_BUFF = "";                                    \
-	MAIN();                                                              \
-	printf("LINE [" TOSTRING(__LINE__) "]: ");                           \
-	if (_OUTPUT_BUFF != _EXPECTED_OUTPUT ) {                             \
-		cprint("FAILURE\n", Color::L_RED);                               \
+#define TEST_MAIN(m_input_buff, m_output_buff)                             \
+	TesterGlobals::_EXPECTED_OUTPUT = strip(m_output_buff);                \
+	TesterGlobals::_INPUT_BUFF = strip(m_input_buff);                      \
+	TesterGlobals::_OUTPUT_BUFF = "";                                      \
+	MAIN();                                                                \
+	printf("LINE [" STRINGIFY(__LINE__) "]: ");                            \
+	if (TesterGlobals::_OUTPUT_BUFF != TesterGlobals::_EXPECTED_OUTPUT ) { \
+		cprint("FAILURE\n", Color::L_RED);                                 \
 		cprint("\tEXPECTED : ", Color::L_YELLOW); printf("%s\n", TesterGlobals::_EXPECTED_OUTPUT .c_str());  \
 		cprint("\tRESULT   : ", Color::L_YELLOW); printf("%s\n", TesterGlobals::_OUTPUT_BUFF.c_str());       \
-	} else {                                                             \
-		cprint("SUCCESS\n", Color::L_GREEN);                             \
+	} else {                                                               \
+		cprint("SUCCESS\n", Color::L_GREEN);                               \
 	}
 
 enum class Color {
@@ -131,14 +131,23 @@ template<class T> struct is_vector<std::vector<T> > {
 	static bool const value = true;
 };
 
+template<class T> struct is_map {
+	static bool const value = false;
+};
+
+template<class T1, class T2> struct is_map<std::map<T1, T2> > {
+	static bool const value = true;
+};
+
 template <typename T>
-std::string _to_string(T value) {
+std::string _to_string(const T& value) {
 	if constexpr (std::is_same<T, bool>::value) {
 		return value ? "true" : "false";
 	} else if constexpr (std::is_arithmetic<T>::value) {
 		return std::to_string(value);
 	} else if constexpr (std::is_same<T, std::string>::value || std::is_same<T, const std::string&>::value) {
 		return value;
+
 	} else if constexpr (std::is_same<T, std::vector<bool>>::value) {
 		std::string ret = "[ ";
 		for (size_t i = 0; i < value.size(); i++) {
@@ -151,6 +160,16 @@ std::string _to_string(T value) {
 		for (size_t i = 0; i < value.size(); i++) {
 			if (i != 0) ret += ", ";
 			ret += _to_string(value[i]);
+		}
+		return ret + " ]";
+
+	} else if constexpr (is_map<T>::value) {
+		auto it = value.begin();
+		std::string ret = "[ ";
+		while (it != value.end()) {
+			if (it == value.begin()) ret += ", ";
+			ret += _to_string(it->first) + " : " + _to_string(it->second);
+			it++;
 		}
 		return ret + " ]";
 	} else if constexpr (std::is_same<T, const char*>::value) {
@@ -210,6 +229,7 @@ public:
 
 	iVecPrinter& add_color(int ind, Color color) { elem_color_override[ind] = color; return *this; }
 	iVecPrinter& remove_color(int ind) { elem_color_override.erase(ind); return *this; }
+	iVecPrinter& clear_color() { elem_color_override.clear(); return *this; }
 
 	void dbprint() override;
 
@@ -233,6 +253,7 @@ public:
 
 	iVec2dPrinter& add_color(int indh, int indw, Color color) { elem_color_override[{ indh, indw }] = color; return *this; }
 	iVec2dPrinter& remove_color(int indh, int indw) { elem_color_override.erase({ indh, indw }); return *this; }
+	iVec2dPrinter& clear_color() { elem_color_override.clear(); return *this; }
 
 	void dbprint() override;
 };
