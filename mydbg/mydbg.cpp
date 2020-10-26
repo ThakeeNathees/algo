@@ -21,6 +21,7 @@ bool TesterGlobals::print_pause = true;
 Color TesterGlobals::index_color = Color::D_PINK;
 Color TesterGlobals::changed_color = Color::D_SKYBLUE;
 
+std::vector<Printable*> TesterGlobals::printables;
 
 std::string strip(const std::string& str) {
 	size_t begin = 0, end = str.size();
@@ -70,74 +71,5 @@ void clear_console() {
 #endif
 
 // DBPRINT IMPLEMENTATIONS ////////////////////////////////////////////////////////////////////////////////
-
-
-void iVecPrinter::dbprint() {
-	printf("[");
-	for (int i = 0; i < (int)src->size(); i++) {
-		if (i) printf((i != r) ? ", " : " ");
-
-		int width_reduction = 0;
-
-		if (i == l) cprint("[", TesterGlobals::index_color), width_reduction++;
-		if (i == ind) cprint("#", TesterGlobals::index_color), width_reduction++;
-
-		Color elem_color = Color::L_WHITE;
-		int elem = (*src)[i];
-		if (i < copy.size()) {
-			if (copy[i] != elem) copy[i] = elem, elem_color = TesterGlobals::changed_color;
-		} else { // new element inserted.
-			copy.push_back(elem);
-			elem_color = TesterGlobals::changed_color;
-		}
-		std::map<int, Color>::iterator it = elem_color_override.find(i);
-		if (it != elem_color_override.end()) elem_color = it->second;
-
-		std::string elem_str = std::to_string(elem);
-		while (elem_str.size() < elem_width - width_reduction) elem_str = " " + elem_str;
-		cprint(elem_str.c_str(), elem_color);
-
-		if (i + 1 == r) cprint("]", TesterGlobals::index_color);
-	}
-	printf(" ]\n");
-}
-
-void iVec2dPrinter::dbprint() {
-	printf("[");
-	for (int h = 0; h < (int)src->size(); h++) {
-		printf(h ? " [" : "["); // align with the very first '['
-
-		for (int w = 0; w < (int)(*src)[0].size(); w++) {
-			if (w) printf((w != closew || h != closeh) ? ", " : " ");
-
-			int width_reduction = 0;
-
-			if (h == openh && w == openw) cprint("[", TesterGlobals::index_color), width_reduction++;
-			if (h == indh && w == indw) cprint("#", TesterGlobals::index_color), width_reduction++;
-
-			Color elem_color = Color::L_WHITE;
-			int elem = (*src)[h][w];
-			if (h < copy.size()) {
-				if (w < copy[h].size()) {
-					if (copy[h][w] != elem) copy[h][w] = elem, elem_color = TesterGlobals::changed_color;
-				} else {
-					copy[h].push_back(elem);
-					elem_color = TesterGlobals::changed_color;
-				}
-			} else {
-				copy.push_back({ elem });
-				elem_color = TesterGlobals::changed_color;
-			}
-			std::map<std::pair<int, int>, Color>::iterator it = elem_color_override.find({ h, w });
-			if (it != elem_color_override.end()) elem_color = it->second;
-
-			std::string elem_str = std::to_string(elem);
-			while (elem_str.size() < elem_width - width_reduction) elem_str = " " + elem_str;
-			cprint(elem_str.c_str(), elem_color);
-
-			if (h == closeh && w + 1 == closew) cprint("]", TesterGlobals::index_color);
-		} printf((h ^ src->size() - 1) ? " ]\n" : " ]");
-	} printf("]\n");
-}
 
 

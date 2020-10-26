@@ -2,6 +2,8 @@
 #ifndef DBG_TYPES_H
 #define DBG_TYPES_H
 
+#include "core.h"
+
 template<class T> struct is_vector {
 	static bool const value = false;
 };

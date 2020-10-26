@@ -29,8 +29,6 @@
 #include <unordered_set>
 #endif
 
-#include "dbgtypes.h"
-
 #ifdef INCLUDE_TYPEDEF
 	#define input(...) int __VA_ARGS__; read(__VA_ARGS__)
 	#define print(m_what)  std::cout << (m_what)
@@ -128,6 +126,7 @@ enum class Color {
 	D_WHITE = 15,
 };
 
+class Printable;
 class TesterGlobals { // a static class for globals.
 public:
 	// timer variables
@@ -145,6 +144,8 @@ public:
 	static bool print_pause; // will pause after each draw.
 	static Color index_color; // 1 2 [3] #4 5  color to indicate index
 	static Color changed_color;
+
+	static std::vector<Printable*> printables;
 };
 
 std::string strip(const std::string& str);

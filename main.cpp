@@ -21,13 +21,6 @@ typedef vec<ivec> ivec2d;
 
 // Solution ///////////////////////////////////////////////////
 
-class Solution { // https://leetcode.com/problems/maximum-equal-frequency/
-public:
-	int maxEqualFreq(vector<int>& nums) {
-		return 1; // TODO:
-	}
-};
-
 // Main ///////////////////////////////////////////////////////
 
 template<typename... T> void read(T&... args) { ((std::cin >> args), ...); }
@@ -45,20 +38,6 @@ int MAIN() {
 // Tests ////////////////////////////////////////////////////////
 #ifdef _TESTING
 int TEST() {
-
-	ivec arr;
-
-	arr = { 1,1,1,2,2,2,3,3,3,4,4,4,5 };
-	CHECK(Solution().maxEqualFreq(arr), 13);
-
-	arr = { 2,2,1,1,5,3,3,5 };
-	CHECK(Solution().maxEqualFreq(arr), 7);
-
-	arr = { 1,1,1,2,2,2 };
-	CHECK(Solution().maxEqualFreq(arr), 5);
-
-	arr = { 10,2,8,9,3,8,1,5,2,3,7,6 };
-	CHECK(Solution().maxEqualFreq(arr), 8);
 
 	// TEST_MAIN(R"()", R"()");
 	return 0;
