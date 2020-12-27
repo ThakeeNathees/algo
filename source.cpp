@@ -4,7 +4,7 @@
 #define MYDBG_IMPL
 #include "mydbg.h"
 
-#include "main.cpp"
+#include "templates/leetcode.cpp"
 
 // contest ------------------------------------------------
 #if 0 // https://the-link/

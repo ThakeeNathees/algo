@@ -60,10 +60,6 @@
 #endif
 
 #ifdef INCLUDE_TYPEDEF
-	#define input(...) int __VA_ARGS__; read(__VA_ARGS__)
-	#define print(m_what)  std::cout << (m_what)
-	#define println(m_what) std::cout << (m_what) << std::endl
-	#define FOR(i, N) for (size_t i = 0; i < N; i++)
 	
 	using namespace std;
 	template <typename T> using vec = vector<T>;
@@ -75,6 +71,13 @@
 #define _TESTING
 #define MAIN _main
 #define TEST main
+
+#define input(...) int __VA_ARGS__; read(__VA_ARGS__)
+#define print(m_what)  std::cout << (m_what)
+#define println(m_what) std::cout << (m_what) << std::endl
+#define FOR(i, N) for (size_t i = 0; i < N; i++)
+#define dbreak(cond) if ((cond)) __debugbreak()
+#define dbg(exp) printf("%s = %s\n", #exp, _to_string(exp).c_str());
 
 #define STRING(x) #x
 #define STRINGIFY(x) STRING(x)
@@ -235,7 +238,7 @@ std::string _to_string(const T& value) {
 		auto it = value.begin();
 		std::string ret = "[ ";
 		while (it != value.end()) {
-			if (it == value.begin()) ret += ", ";
+			if (it != value.begin()) ret += ", ";
 			ret += _to_string(it->first) + " : " + _to_string(it->second);
 			it++;
 		}

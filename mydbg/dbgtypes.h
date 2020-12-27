@@ -47,7 +47,7 @@ std::string _to_string(const T& value) {
 		auto it = value.begin();
 		std::string ret = "[ ";
 		while (it != value.end()) {
-			if (it == value.begin()) ret += ", ";
+			if (it != value.begin()) ret += ", ";
 			ret += _to_string(it->first) + " : " + _to_string(it->second);
 			it++;
 		}
