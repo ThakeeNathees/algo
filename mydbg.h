@@ -28,9 +28,6 @@
 #ifndef DBGPRINT_H
 #define DBGPRINT_H
 
-#ifndef TESTER_H
-#define TESTER_H
-
 #include <assert.h>
 #include <chrono>
 #include <iostream>
@@ -187,14 +184,6 @@ void set_cursor_pos(int column, int line);
 void cprint(const char* p_msg, Color p_fg, Color p_bg = Color::BLACK);
 
 
-#endif // TESTER_H
-
-
-#ifndef DBG_TYPES_H
-#define DBG_TYPES_H
-
-//include "core.h"
-
 template<class T> struct is_vector {
 	static bool const value = false;
 };
@@ -249,8 +238,6 @@ std::string _to_string(const T& value) {
 	// don't return anything here as it may throw compiler error if any type were missed.
 }
 
-
-#endif // DBG_TYPES_H
 
 class Printable {
 public:
@@ -401,16 +388,11 @@ public:
 	}
 };
 
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
 #endif // DBGPRINT_H
 
 //--------------- IMPLEMENTATIONS -------------------
 
 #if defined(MYDBG_IMPL)
-
-//include "core.h"
 
 #ifdef _WIN32
 	#define NOMINMAX
@@ -480,10 +462,5 @@ void clear_console() {
 	system("clear");
 }
 #endif
-
-// DBPRINT IMPLEMENTATIONS ////////////////////////////////////////////////////////////////////////////////
-
-
-
 
 #endif // MYDBG_IMPL

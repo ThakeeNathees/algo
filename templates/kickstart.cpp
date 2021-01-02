@@ -27,13 +27,14 @@ template<typename T> void read(vec<T>& arr) { FOR(i, arr.size()) { std::cin >> a
 // void KickStart() {}
 
 void KickStart() {
-	//input(N);
+	
+	
+
 }
 
 int MAIN() {
 	REDIRECT();
-	//KICK_START();
-
+	KICK_START();
 	return 0;
 }
 
@@ -41,6 +42,7 @@ int MAIN() {
 // Tests ////////////////////////////////////////////////////////
 #ifdef _TESTING
 int TEST() {
+
 
 	// TEST_MAIN(R"()", R"()");
 	return 0;
